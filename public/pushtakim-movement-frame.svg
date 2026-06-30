@@ -1,0 +1,41 @@
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1920" height="1080" fill="#050505"/>
+  <rect width="1920" height="1080" fill="url(#wall)"/>
+  <path d="M0 760C260 690 414 726 622 762C832 799 1054 808 1264 736C1510 652 1732 692 1920 756V1080H0V760Z" fill="#080808"/>
+  <path d="M0 824C238 782 478 795 722 842C958 887 1208 898 1438 834C1655 774 1798 796 1920 846V1080H0V824Z" fill="#111"/>
+  <path d="M105 700H1815" stroke="#2a2a2a" stroke-width="5"/>
+  <path d="M218 696L270 421H378L433 696" stroke="#191919" stroke-width="26" stroke-linecap="square"/>
+  <path d="M1512 696L1563 396H1684L1737 696" stroke="#191919" stroke-width="26" stroke-linecap="square"/>
+  <path d="M356 308H476L402 399L505 438L629 352" stroke="#f5f0ea" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="347" cy="312" r="31" fill="#f5f0ea"/>
+  <path d="M505 438L469 559L552 652" stroke="#f5f0ea" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M479 558L371 639" stroke="#f5f0ea" stroke-width="18" stroke-linecap="round"/>
+  <path d="M1182 312C1246 240 1350 214 1451 252" stroke="#c1121f" stroke-width="12" stroke-linecap="round"/>
+  <path d="M1228 352L1356 414L1306 526L1190 574" stroke="#f5f0ea" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="1206" cy="342" r="29" fill="#f5f0ea"/>
+  <path d="M1356 414L1461 347L1566 390" stroke="#f5f0ea" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M1306 526L1394 640" stroke="#f5f0ea" stroke-width="18" stroke-linecap="round"/>
+  <path d="M138 228H648" stroke="#c1121f" stroke-width="10"/>
+  <path d="M1260 660H1780" stroke="#c1121f" stroke-width="8"/>
+  <path d="M774 258H1052" stroke="#202020" stroke-width="22"/>
+  <path d="M816 318H1126" stroke="#202020" stroke-width="18"/>
+  <path d="M88 900H1830" stroke="#171717" stroke-width="3"/>
+  <path d="M0 0H1920V1080H0V0Z" fill="url(#vignette)"/>
+  <path d="M0 0H1920V1080H0V0Z" fill="url(#redwash)"/>
+  <defs>
+    <pattern id="wall" width="96" height="96" patternUnits="userSpaceOnUse">
+      <path d="M0 95H96M95 0V96" stroke="#191919" stroke-width="2"/>
+      <path d="M12 20H84M18 54H74" stroke="#101010" stroke-width="3"/>
+    </pattern>
+    <radialGradient id="vignette" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(960 540) rotate(90) scale(650 1040)">
+      <stop offset="0" stop-color="#050505" stop-opacity="0"/>
+      <stop offset="0.62" stop-color="#050505" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#050505" stop-opacity="0.9"/>
+    </radialGradient>
+    <linearGradient id="redwash" x1="160" y1="140" x2="1640" y2="950" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#c1121f" stop-opacity="0.24"/>
+      <stop offset="0.42" stop-color="#050505" stop-opacity="0"/>
+      <stop offset="1" stop-color="#c1121f" stop-opacity="0.16"/>
+    </linearGradient>
+  </defs>
+</svg>
