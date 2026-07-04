@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Noto_Sans_Hebrew } from "next/font/google";
+
 import "@/app/globals.css";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
+import { siteCopy } from "@/content/site-copy";
 
 const notoSansHebrew = Noto_Sans_Hebrew({
   subsets: ["hebrew", "latin"],
@@ -16,12 +18,10 @@ export const metadata: Metadata = {
     default: "PushTakim",
     template: "%s | PushTakim"
   },
-  description:
-    "האתר הרשמי של PushTakim, קהילת תרבות התנועה בישראל לפארקור, קליסטניקס, טריקינג, ברייקדאנס, קרקס ועוד.",
+  description: siteCopy.metadata.defaultDescription,
   openGraph: {
     title: "PushTakim",
-    description:
-      "הבית של תרבות התנועה בישראל.",
+    description: siteCopy.metadata.openGraphDescription,
     url: "https://pushtakim.com",
     siteName: "PushTakim",
     type: "website"

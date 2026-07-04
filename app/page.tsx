@@ -1,76 +1,46 @@
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
+
 import { Reveal } from "@/components/motion/reveal";
+import { YouTubeGuideCard } from "@/components/ui/youtube-guide-card";
+import { siteCopy } from "@/content/site-copy";
 
-const tourStops = [
-  {
-    id: "push-tour-mabuza",
-    stop: "STOP 1",
-    city: "פתח תקווה",
-    date: "03.08",
-    time: "18:00-20:00",
-    venue: "Mabuza",
-    address: "דב לויטן 8, פתח תקווה"
-  },
-  {
-    id: "push-tour-raiz",
-    stop: "STOP 2",
-    city: "מודיעין",
-    date: "14.08",
-    time: "12:00-14:00",
-    venue: "Raiz Gym",
-    address: "מתתיהו הכהן 5, מודיעין"
-  },
-  {
-    id: "push-tour-pk-spot",
-    stop: "STOP 3",
-    city: "באר שבע",
-    date: "16.08",
-    time: "10:00-12:00 Community Skill Round / 12:00-13:00 Break / 13:00-15:00 Final + Open Gym",
-    venue: "PK Spot",
-    address: "מבצע יואב 49, באר שבע"
-  },
-  {
-    id: "push-tour-calima",
-    stop: "STOP 4",
-    city: "ראשון לציון",
-    date: "28.08",
-    time: "10:30-13:00",
-    venue: "Calima",
-    address: "הכשרת היישוב 10, ראשון לציון"
-  }
-];
-
-const takeaways = [
-  "🤝 חברים חדשים",
-  "🧠 דרך חדשה להסתכל על תנועה",
-  "🏃 סקילים, רעיונות ואתגר חדש",
-  "❤️ קהילה שתמיד תשמח לראות אתכם שוב"
-];
-
-const everythingElse = [
-  { title: "קהילה", href: "/community" },
-  { title: "אירועים ומפגשים", href: "/events" },
-  { title: "סדנאות וחוגים", href: "/workshops" },
-  { title: "מופעים ופעלולים", href: "/shows" },
-  { title: "פרויקטים", href: "/productions" },
-  { title: "ביגוד ואקססוריז — ייפתח בקרוב", href: "/store" },
-  { title: "מדריכים חינמיים", href: "#guides" },
-  { title: "צור קשר", href: "#contact" }
-];
+const tourStops = siteCopy.home.tourStops;
+const takeaways = siteCopy.home.takeaways;
+const everythingElse = siteCopy.home.everythingElse;
+const sectionImages: Record<string, string> = {
+  "/community": "/images/community.jpg",
+  "/events": "/images/events2.jpg",
+  "/workshops": "/images/workshops.jpg",
+  "/shows": "/images/shows.jpg",
+  "/productions": "/images/productions2.jpg",
+  "/store": "/images/store2.jpg"
+};
 
 export default function HomePage() {
   return (
     <main className="bg-black text-bone">
       <section className="relative isolate min-h-screen overflow-hidden">
         <Image
-          src="/pushtakim-hero-photo.png"
-          alt="קהילת תנועה של PushTakim מתאמנת יחד ברגע דוקומנטרי"
+          src="/images/hero.jpg"
+          alt={siteCopy.home.hero.imageAlt}
           fill
           priority
           sizes="100vw"
-          className="object-cover"
+          className="bg-black object-contain object-center"
         />
+        <video
+          className="absolute inset-0 h-full w-full bg-black object-contain object-center"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          poster="/images/hero.jpg"
+          aria-hidden="true"
+        >
+          <source src="/images/hero.mp4" type="video/mp4" />
+        </video>
         <div className="absolute inset-0 bg-black/46" />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.92)_0%,rgba(0,0,0,0.58)_43%,rgba(0,0,0,0.16)_100%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,0.92)_0%,rgba(0,0,0,0)_40%,rgba(0,0,0,0.62)_100%)]" />
@@ -84,15 +54,15 @@ export default function HomePage() {
                 PushTakim
               </p>
               <h1 className="mt-8 text-5xl font-black leading-[1.03] tracking-tight text-white sm:text-7xl lg:text-8xl">
-                לא משנה מאיפה באתם.
+                {siteCopy.home.hero.headline}
               </h1>
               <p className="mt-8 max-w-3xl text-3xl font-black leading-tight text-white sm:text-5xl">
-                אם אתם אוהבים לזוז —
+                {siteCopy.home.hero.secondaryTop}
                 <br />
-                באתם למקום הנכון.
+                {siteCopy.home.hero.secondaryBottom}
               </p>
               <p className="mt-8 text-2xl font-black text-white/88 sm:text-3xl">
-                בואו נזוז ביחד.
+                {siteCopy.home.hero.finalLine}
               </p>
 
               <div className="mt-12 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
@@ -100,13 +70,13 @@ export default function HomePage() {
                   href="/community"
                   className="inline-flex min-h-14 w-full items-center justify-center rounded-2xl bg-blood px-6 py-4 text-center text-base font-black text-white shadow-[0_20px_80px_rgba(193,18,31,0.32)] transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-black sm:w-auto"
                 >
-                  ❤️‍🔥 בואו להרים את התנועה בישראל
+                  {siteCopy.home.hero.primaryCta}
                 </Link>
                 <Link
                   href="/events"
                   className="inline-flex min-h-14 w-full items-center justify-center rounded-2xl border border-white/35 bg-black/24 px-6 py-4 text-center text-base font-black text-white backdrop-blur-md transition duration-300 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-black sm:w-auto"
                 >
-                  🎟️ לאירועים הקרובים
+                  {siteCopy.home.hero.secondaryCta}
                 </Link>
               </div>
             </div>
@@ -114,7 +84,7 @@ export default function HomePage() {
         </div>
 
         <div className="absolute inset-x-0 bottom-8 z-10 flex justify-center">
-          <p className="animate-pulse text-sm font-bold text-white/56">גללו למטה ↓</p>
+          <p className="animate-pulse text-sm font-bold text-white/56">{siteCopy.home.hero.scroll}</p>
         </div>
       </section>
 
@@ -122,28 +92,27 @@ export default function HomePage() {
         <div className="mx-auto grid max-w-7xl gap-14 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-20">
           <Reveal>
             <div>
-              <p className="text-sm font-black uppercase tracking-[0.28em] text-blood">למה PushTakim?</p>
+              <p className="text-sm font-black uppercase tracking-[0.28em] text-blood">{siteCopy.home.why.eyebrow}</p>
               <h2 className="mt-6 max-w-3xl text-4xl font-black leading-tight text-white sm:text-6xl lg:text-7xl">
-                כי תנועה לא אמורה להישאר לבד.
+                {siteCopy.home.why.headline}
               </h2>
-              <p className="mt-7 max-w-2xl text-lg font-medium leading-9 text-zinc-300 sm:text-xl">
-                אנחנו קיימים כדי לחבר אנשים דרך הגוף, דרך הרחוב, דרך האולם, דרך הרגע שבו מישהו אומר לך:
-                נסה שוב, אני איתך.
+              <p className="mt-7 max-w-2xl whitespace-pre-line text-lg font-medium leading-9 text-zinc-300 sm:text-xl">
+                {siteCopy.home.why.text}
               </p>
             </div>
           </Reveal>
           <Reveal delay={0.1}>
             <div className="relative min-h-[28rem] overflow-hidden rounded-2xl shadow-[0_24px_90px_rgba(0,0,0,0.45)] sm:min-h-[34rem]">
               <Image
-                src="/pushtakim-hero-photo.png"
-                alt="רגע קהילתי של PushTakim"
+                src="/images/community.jpg"
+                alt={siteCopy.home.why.imageAlt}
                 fill
                 sizes="(min-width: 1024px) 50vw, 100vw"
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/16 to-transparent" />
               <p className="absolute bottom-6 right-6 max-w-sm text-2xl font-black text-white sm:text-3xl">
-                אנשים לפני טריקים.
+                {siteCopy.home.why.imageCaption}
               </p>
             </div>
           </Reveal>
@@ -166,17 +135,17 @@ export default function HomePage() {
                 </h2>
               </div>
               <div className="max-w-2xl space-y-5 text-lg font-medium leading-8 text-zinc-300">
-                <p>אנחנו לא רק עוברים בין ערים.</p>
-                <p className="text-2xl font-black text-white">אנחנו מחברים קהילות.</p>
+                <p>{siteCopy.home.tour.introFirst}</p>
+                <p className="text-2xl font-black text-white">{siteCopy.home.tour.introSecond}</p>
                 <p>
-                  בכל תחנה מצטרפים אנשים חדשים,
+                  {siteCopy.home.tour.introThird[0]}
                   <br />
-                  לומדים משהו חדש,
+                  {siteCopy.home.tour.introThird[1]}
                   <br />
-                  וממשיכים ביחד לתחנה הבאה.
+                  {siteCopy.home.tour.introThird[2]}
                 </p>
                 <p className="rounded-2xl border border-blood/40 bg-blood/10 p-4 text-base font-black leading-7 text-white">
-                  עד שחיבור התשלום באתר יעלה — אפשר לשמור כרטיס ישירות בוואטסאפ.
+                  {siteCopy.home.tour.note}
                 </p>
               </div>
             </div>
@@ -202,7 +171,7 @@ export default function HomePage() {
                     href="#contact"
                     className="mt-auto inline-flex min-h-12 w-full items-center justify-center rounded-2xl bg-blood px-5 py-3 text-sm font-black text-white transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-black sm:w-fit"
                   >
-                    רוצה כרטיס? דברו איתנו
+                    {siteCopy.home.tour.cardCta}
                   </Link>
                 </article>
               </Reveal>
@@ -216,8 +185,8 @@ export default function HomePage() {
           <Reveal>
             <div className="relative min-h-[28rem] overflow-hidden rounded-2xl shadow-[0_24px_90px_rgba(0,0,0,0.45)] sm:min-h-[32rem]">
               <Image
-                src="/pushtakim-hero-photo.png"
-                alt="אנשים חוזרים מסשן תנועה"
+                src="/images/events2.jpg"
+                alt={siteCopy.home.takeHome.imageAlt}
                 fill
                 sizes="(min-width: 1024px) 50vw, 100vw"
                 className="object-cover"
@@ -227,9 +196,9 @@ export default function HomePage() {
           </Reveal>
           <Reveal delay={0.1}>
             <div>
-              <p className="text-sm font-black uppercase tracking-[0.28em] text-blood">מה לוקחים הביתה?</p>
+              <p className="text-sm font-black uppercase tracking-[0.28em] text-blood">{siteCopy.home.takeHome.eyebrow}</p>
               <h2 className="mt-6 text-4xl font-black leading-tight text-white sm:text-6xl lg:text-7xl">
-                עם מה תחזרו הביתה?
+                {siteCopy.home.takeHome.headline}
               </h2>
               <div className="mt-12 grid gap-5 sm:grid-cols-2">
                 {takeaways.map((item) => (
@@ -247,12 +216,12 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl">
           <Reveal>
             <div className="max-w-3xl">
-              <p className="text-sm font-black uppercase tracking-[0.28em] text-blood">כל מה שאנחנו עושים</p>
+              <p className="text-sm font-black uppercase tracking-[0.28em] text-blood">{siteCopy.home.everything.eyebrow}</p>
               <h2 className="mt-6 text-4xl font-black leading-tight text-white sm:text-6xl lg:text-7xl">
-                הטור הוא רק ההתחלה.
+                {siteCopy.home.everything.headline}
               </h2>
               <p className="mt-7 max-w-2xl text-lg font-medium leading-8 text-zinc-300">
-                סדנאות וחוגים. מופעים ופעלולים. פרויקטים. ביגוד ואקססוריז.
+                {siteCopy.home.everything.description}
               </p>
             </div>
           </Reveal>
@@ -263,9 +232,24 @@ export default function HomePage() {
                   href={item.href}
                   className="group flex min-h-72 flex-col justify-end overflow-hidden rounded-2xl border border-white/10 bg-white/[0.045] p-6 shadow-[0_18px_70px_rgba(0,0,0,0.32)] transition duration-300 hover:-translate-y-1 hover:border-blood/70 hover:shadow-[0_24px_90px_rgba(193,18,31,0.14)]"
                 >
-                  <div className="mb-auto h-32 rounded-2xl bg-[linear-gradient(135deg,rgba(193,18,31,0.22),transparent_42%),radial-gradient(circle_at_60%_35%,rgba(255,255,255,0.14),transparent_9rem)] transition duration-300 group-hover:scale-[1.02]" />
+                  <div className="relative mb-auto h-32 overflow-hidden rounded-2xl bg-[#090909] transition duration-300 group-hover:scale-[1.02]">
+                    {sectionImages[item.href] ? (
+                      <>
+                        <Image
+                          src={sectionImages[item.href]}
+                          alt={item.title}
+                          fill
+                          sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
+                          className="object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/30" />
+                      </>
+                    ) : (
+                      <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(193,18,31,0.22),transparent_42%),radial-gradient(circle_at_60%_35%,rgba(255,255,255,0.14),transparent_9rem)]" />
+                    )}
+                  </div>
                   <p className="mt-8 text-2xl font-black text-white">{item.title}</p>
-                  <p className="mt-4 text-sm font-bold text-blood">להמשיך</p>
+                  <p className="mt-4 text-sm font-bold text-blood">{siteCopy.shared.continue}</p>
                 </Link>
               </Reveal>
             ))}
@@ -277,31 +261,23 @@ export default function HomePage() {
         <div className="mx-auto grid max-w-7xl gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-20">
           <Reveal>
             <div>
-              <p className="text-sm font-black uppercase tracking-[0.28em] text-blood">מדריכים חינמיים</p>
+              <p className="text-sm font-black uppercase tracking-[0.28em] text-blood">{siteCopy.home.guides.eyebrow}</p>
               <h2 className="mt-6 text-4xl font-black leading-tight text-white sm:text-6xl lg:text-7xl">
-                ללמוד לזוז — גם לפני האירוע
+                {siteCopy.home.guides.headline}
               </h2>
               <p className="mt-7 max-w-2xl text-lg font-medium leading-8 text-zinc-300">
-                חיברנו לכם מדריכים קצרים מהיוטיוב שלנו כדי שתוכלו להתחיל לזוז, להבין את הווייב, ולהגיע לאירוע עם חשק לפתוח עוד דלת בעולם התנועה.
+                {siteCopy.home.guides.description}
               </p>
               <Link
                 href="https://youtube.com/@pushtakim692"
                 className="mt-12 inline-flex min-h-14 w-full items-center justify-center rounded-2xl bg-blood px-8 py-4 text-center text-base font-black text-white shadow-[0_20px_80px_rgba(193,18,31,0.28)] transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-black sm:w-auto"
               >
-                צפו במדריכים
+                {siteCopy.home.guides.cta}
               </Link>
             </div>
           </Reveal>
           <Reveal delay={0.1}>
-            <div className="relative aspect-[9/16] min-h-[34rem] overflow-hidden rounded-2xl border border-white/10 bg-black shadow-[0_24px_90px_rgba(0,0,0,0.45)] sm:aspect-video lg:aspect-[9/16]">
-              <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(193,18,31,0.22),transparent_42%),radial-gradient(circle_at_50%_38%,rgba(255,255,255,0.14),transparent_10rem)]" />
-              <div className="absolute inset-0 grid place-items-center p-8 text-center">
-                <div>
-                  <p className="text-sm font-black uppercase tracking-[0.28em] text-blood" dir="ltr">YouTube Shorts</p>
-                  <p className="mt-5 text-3xl font-black text-white">מדריך קצר יופיע כאן</p>
-                </div>
-              </div>
-            </div>
+            <YouTubeGuideCard {...siteCopy.home.guides.videos[0]} />
           </Reveal>
         </div>
       </section>
@@ -310,12 +286,12 @@ export default function HomePage() {
         <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-end lg:gap-20">
           <Reveal>
             <div>
-              <p className="text-sm font-black uppercase tracking-[0.28em] text-blood">צור קשר</p>
+              <p className="text-sm font-black uppercase tracking-[0.28em] text-blood">{siteCopy.home.contact.eyebrow}</p>
               <h2 className="mt-6 text-4xl font-black leading-tight text-white sm:text-6xl lg:text-7xl">
-                רוצים כרטיס או שאלה מהירה?
+                {siteCopy.home.contact.headline}
               </h2>
               <p className="mt-7 max-w-2xl text-lg font-medium leading-8 text-zinc-300">
-                עד שחיבור התשלום באתר יעלה — אפשר לשמור כרטיס ישירות בוואטסאפ.
+                {siteCopy.home.contact.note}
               </p>
             </div>
           </Reveal>
@@ -349,8 +325,8 @@ export default function HomePage() {
 
       <section className="relative isolate min-h-[82vh] overflow-hidden px-5 py-28 sm:px-8 sm:py-36 lg:py-44">
         <Image
-          src="/pushtakim-hero-photo.png"
-          alt="קהילת PushTakim ביחד"
+          src="/images/productions3.jpg"
+          alt={siteCopy.home.manifesto.imageAlt}
           fill
           sizes="100vw"
           className="-z-20 object-cover"
@@ -360,20 +336,20 @@ export default function HomePage() {
         <div className="mx-auto flex min-h-[60vh] max-w-7xl items-center">
           <Reveal>
             <div className="max-w-5xl">
-              <p className="text-sm font-black uppercase tracking-[0.28em] text-blood">מניפסט</p>
+              <p className="text-sm font-black uppercase tracking-[0.28em] text-blood">{siteCopy.home.manifesto.eyebrow}</p>
               <h2 className="mt-7 text-5xl font-black leading-tight text-white sm:text-7xl lg:text-8xl">
-                אם אתם אוהבים לזוז,
+                {siteCopy.home.manifesto.headlineTop}
                 <br />
-                יש לכם כאן בית.
+                {siteCopy.home.manifesto.headlineBottom}
               </h2>
               <p className="mt-8 max-w-2xl text-lg font-medium leading-9 text-zinc-300 sm:text-xl">
-                לא משנה מאיפה באתם. לא משנה איך קוראים למה שאתם עושים. אנחנו נפגשים בתנועה.
+                {siteCopy.home.manifesto.text}
               </p>
               <Link
                 href="/events"
                 className="mt-12 inline-flex min-h-14 w-full items-center justify-center rounded-2xl bg-blood px-8 py-4 text-center text-base font-black text-white shadow-[0_20px_80px_rgba(193,18,31,0.28)] transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-black sm:w-auto"
               >
-                בואו נזוז ביחד
+                {siteCopy.home.manifesto.cta}
               </Link>
             </div>
           </Reveal>

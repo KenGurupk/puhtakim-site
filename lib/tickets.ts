@@ -1,3 +1,4 @@
+import { siteCopy } from "@/content/site-copy";
 import type { EventListing } from "@/types/content";
 
 export type TicketAction = {
@@ -13,15 +14,15 @@ export interface TicketProvider {
 class StaticTicketProvider implements TicketProvider {
   getAction(event: EventListing): TicketAction {
     if (event.ticketStatus === "sold-out") {
-      return { label: "נגמרו המקומות", href: "/contact?topic=waitlist", enabled: false };
+      return { label: siteCopy.shared.ticketActions.soldOut, href: "/contact?topic=waitlist", enabled: false };
     }
 
     if (event.ticketStatus === "soon") {
-      return { label: "עדכנו אותי", href: `/contact?topic=${event.id}`, enabled: true };
+      return { label: siteCopy.shared.ticketActions.notifyMe, href: `/contact?topic=${event.id}`, enabled: true };
     }
 
     return {
-      label: "אני בפנים",
+      label: siteCopy.shared.ticketActions.join,
       href: event.ticketUrl ?? `/contact?topic=${event.id}`,
       enabled: true
     };

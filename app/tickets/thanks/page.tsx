@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-export const metadata: Metadata = {
-  title: "נתראה באירוע",
-  description: "אישור הצטרפות לאירוע PushTakim."
-};
+import { siteCopy } from "@/content/site-copy";
+
+const copy = siteCopy.pages.ticketThanks;
+
+export const metadata: Metadata = copy.metadata;
 
 export default function TicketThanksPage() {
   return (
@@ -12,16 +13,16 @@ export default function TicketThanksPage() {
       <div className="max-w-3xl">
         <p className="text-sm font-black text-blood">PushTakim</p>
         <h1 className="mt-5 text-5xl font-black leading-tight text-white sm:text-7xl">
-          נתראה באירוע ❤️‍🔥
+          {copy.headline}
         </h1>
         <p className="mx-auto mt-6 max-w-xl text-lg font-medium leading-8 text-zinc-300">
-          תביאו נעליים, מים, ראש פתוח, ואנרגיה טובה. כל השאר קורה כשנפגשים.
+          {copy.text}
         </p>
         <Link
           href="/"
           className="mt-9 inline-flex bg-blood px-7 py-4 text-base font-black text-white transition hover:bg-white hover:text-black"
         >
-          חזרה הביתה
+          {siteCopy.shared.backHome}
         </Link>
       </div>
     </section>

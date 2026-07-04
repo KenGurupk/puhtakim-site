@@ -1,7 +1,9 @@
 import Link from "next/link";
+
+import { siteCopy } from "@/content/site-copy";
+import { getTicketAction } from "@/lib/tickets";
 import { Reveal } from "@/components/motion/reveal";
 import type { EventListing } from "@/types/content";
-import { getTicketAction } from "@/lib/tickets";
 
 type EventCardProps = {
   event: EventListing;
@@ -10,12 +12,7 @@ type EventCardProps = {
 
 export function EventCard({ event, delay }: EventCardProps) {
   const ticket = getTicketAction(event);
-  const typeLabel = {
-    event: "אירוע",
-    workshop: "סדנה",
-    show: "מופע",
-    production: "פרויקט"
-  }[event.type];
+  const typeLabel = siteCopy.shared.eventTypes[event.type];
 
   return (
     <Reveal delay={delay} className="h-full">

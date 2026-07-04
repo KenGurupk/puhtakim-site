@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+
+import { siteCopy } from "@/content/site-copy";
 import type { ContactInquiryType, ContactPayload } from "@/types/contact";
 
-const inquiryTypes: ContactInquiryType[] = ["הזמנה", "סדנה", "הפקה", "שיתוף פעולה", "חנות"];
+const inquiryTypes = siteCopy.contact.form.inquiryTypes;
 
 export function ContactForm() {
   const [type, setType] = useState<ContactInquiryType>(inquiryTypes[0]);
@@ -35,7 +37,7 @@ export function ContactForm() {
     >
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="grid gap-2 text-sm font-semibold text-zinc-200">
-          שם
+          {siteCopy.contact.form.fields.name}
           <input
             name="name"
             required
@@ -44,7 +46,7 @@ export function ContactForm() {
           />
         </label>
         <label className="grid gap-2 text-sm font-semibold text-zinc-200">
-          אימייל
+          {siteCopy.contact.form.fields.email}
           <input
             name="email"
             type="email"
@@ -55,7 +57,7 @@ export function ContactForm() {
         </label>
       </div>
       <label className="grid gap-2 text-sm font-semibold text-zinc-200">
-        סוג פנייה
+        {siteCopy.contact.form.fields.type}
         <select
           name="type"
           value={type}
@@ -68,7 +70,7 @@ export function ContactForm() {
         </select>
       </label>
       <label className="grid gap-2 text-sm font-semibold text-zinc-200">
-        הודעה
+        {siteCopy.contact.form.fields.message}
         <textarea
           name="message"
           required
@@ -81,16 +83,16 @@ export function ContactForm() {
         disabled={status === "sending"}
         className="w-fit rounded-full bg-citron px-5 py-3 text-sm font-black text-ink transition hover:bg-white"
       >
-        {status === "sending" ? "שולחים..." : "שלחו פנייה"}
+        {status === "sending" ? siteCopy.contact.form.sending : siteCopy.contact.form.submit}
       </button>
       {status === "sent" && (
         <p className="rounded-md border border-lagoon/30 bg-lagoon/10 px-4 py-3 text-sm font-semibold text-lagoon">
-          קיבלנו את הפנייה. מכאן אפשר לחבר את הטופס למייל, CRM או מערכת כרטיסים.
+          {siteCopy.contact.form.success}
         </p>
       )}
       {status === "error" && (
         <p className="rounded-md border border-ember/30 bg-ember/10 px-4 py-3 text-sm font-semibold text-ember">
-          משהו השתבש. בדקו את השדות ונסו שוב.
+          {siteCopy.contact.form.error}
         </p>
       )}
     </form>

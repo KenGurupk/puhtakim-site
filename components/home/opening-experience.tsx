@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { TraceurLoader } from "@/components/brand/traceur-loader";
 
-const fragments = ["ריצה.", "צחוק.", "יד שמושיטה עזרה.", "נחיתה.", "קהילה."];
+import { TraceurLoader } from "@/components/brand/traceur-loader";
+import { siteCopy } from "@/content/site-copy";
+
+const fragments = siteCopy.openingExperience.fragments;
 
 export function OpeningExperience() {
   const [visible, setVisible] = useState(false);
@@ -42,7 +44,7 @@ export function OpeningExperience() {
             onClick={() => setVisible(false)}
             className="absolute left-5 top-5 z-10 border border-white/20 px-4 py-2 text-xs font-black text-white/70 transition hover:border-blood hover:text-white"
           >
-            דלגו
+            {siteCopy.openingExperience.skip}
           </button>
 
           <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col justify-between px-5 py-8 sm:px-8">
@@ -79,9 +81,9 @@ export function OpeningExperience() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 3.3, duration: 0.85, ease: "easeOut" }}
               >
-                <p>לא משנה מאיפה באתם.</p>
-                <p>אם אתם אוהבים לזוז...</p>
-                <p className="text-blood">אז בואו נזוז כולם ביחד.</p>
+                <p>{siteCopy.openingExperience.lines[0]}</p>
+                <p>{siteCopy.openingExperience.lines[1]}</p>
+                <p className="text-blood">{siteCopy.openingExperience.lines[2]}</p>
               </motion.div>
 
               <motion.div
@@ -95,7 +97,7 @@ export function OpeningExperience() {
                     PushTakim
                   </p>
                   <p className="mt-3 text-xl font-black text-white/85 sm:text-3xl">
-                    הבית של תרבות התנועה בישראל
+                    {siteCopy.openingExperience.tagline}
                   </p>
                 </div>
                 <Link
@@ -103,7 +105,7 @@ export function OpeningExperience() {
                   onClick={() => setVisible(false)}
                   className="bg-blood px-6 py-4 text-base font-black text-white transition hover:bg-white hover:text-black"
                 >
-                  🎟️ בואו לזוז איתנו
+                  {siteCopy.openingExperience.cta}
                 </Link>
               </motion.div>
             </div>

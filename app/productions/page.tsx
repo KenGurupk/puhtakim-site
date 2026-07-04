@@ -1,24 +1,21 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+
 import { FeatureCard } from "@/components/cards/feature-card";
 import { MediaFrame } from "@/components/ui/media-frame";
 import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
+import { siteCopy } from "@/content/site-copy";
 import { productionServices } from "@/data/content";
 
-export const metadata: Metadata = {
-  title: "פרויקטים",
-  description: "פרויקטי תנועה, הפקות ותוכן של PushTakim."
-};
+const copy = siteCopy.pages.productions;
+
+export const metadata: Metadata = copy.metadata;
 
 export default function ProductionsPage() {
   return (
     <>
-      <PageHero
-        eyebrow="פרויקטים"
-        title="כשצריך להפוך רעיון לתנועה אמיתית."
-        description="PushTakim בונה פרויקטים שמחברים אנשים, מרחב, צילום, במה וקהילה."
-      />
+      <PageHero {...copy.hero} />
       <Section>
         <div className="grid gap-4 md:grid-cols-3">
           {productionServices.map((service, index) => (
@@ -29,17 +26,17 @@ export default function ProductionsPage() {
       <Section>
         <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <div>
-            <h2 className="text-4xl font-black text-white sm:text-5xl">מה אפשר לבנות יחד?</h2>
+            <h2 className="text-4xl font-black text-white sm:text-5xl">{copy.buildTitle}</h2>
             <div className="mt-8 grid gap-3 text-sm font-bold text-zinc-300">
-              {["אירוע קהילה", "קמפיין וידאו", "סדנת חברה", "מופע פתיחה", "פרויקט עירוני"].map((item) => (
+              {copy.items.map((item) => (
                 <p key={item} className="border-r-2 border-blood pr-4">{item}</p>
               ))}
             </div>
             <Link href="/contact" className="mt-8 inline-flex bg-blood px-7 py-4 text-base font-black text-white transition hover:bg-white hover:text-black">
-              מתחילים שיחה
+              {copy.cta}
             </Link>
           </div>
-          <MediaFrame label="תמונות פרויקט / מאחורי הקלעים" className="min-h-[28rem]" />
+          <MediaFrame src="/images/productions.jpg" label={copy.mediaLabel} className="min-h-[28rem]" />
         </div>
       </Section>
     </>
