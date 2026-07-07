@@ -17,7 +17,7 @@ export default function CommunityPage() {
       <PageHero {...copy.hero} />
       <Section>
         <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
-          <MediaFrame src="/images/community.jpg" label={copy.mediaLabel} className="min-h-[26rem]" />
+          <MediaFrame src="/images/photo-community.jpg" label={copy.mediaLabel} className="min-h-[26rem]" />
           <div className="grid gap-4">
             {copy.tracks.map((track, index) => (
               <FeatureCard key={track.title} {...track} delay={index * 0.06} />
@@ -26,7 +26,7 @@ export default function CommunityPage() {
         </div>
       </Section>
       <Section {...copy.join}>
-        <Link href="/events" className="inline-flex bg-blood px-7 py-4 text-base font-black text-white transition hover:bg-white hover:text-black">
+        <Link href="/events" className="motion-button inline-flex min-h-14 items-center justify-center rounded-2xl bg-blood px-7 py-4 text-center text-base font-black text-white transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-black active:scale-[0.98]">
           {siteCopy.shared.upcomingEvents}
         </Link>
       </Section>

@@ -3,8 +3,8 @@ import Image from "next/image";
 import { existsSync } from "fs";
 import { join } from "path";
 
+import { HeaderNav } from "@/components/layout/header-nav";
 import { siteCopy } from "@/content/site-copy";
-import { navItems } from "@/data/navigation";
 
 const logoCandidates = ["logo.svg", "logo.png", "logo.webp", "logo.jpg"];
 const logoFile = logoCandidates.find((file) => existsSync(join(process.cwd(), "public", "images", file)));
@@ -19,47 +19,30 @@ export function Header() {
             <Image
               src={logoSrc}
               alt=""
-              width={112}
-              height={40}
+              width={360}
+              height={109}
+              priority
               unoptimized
-              className="h-10 w-auto max-w-28 object-contain"
+              className="h-auto w-32 object-contain transition duration-300 group-hover:scale-[1.03] sm:w-36"
             />
           ) : (
-            <span className="grid size-10 place-items-center rounded-sm bg-blood text-lg font-black text-white transition group-hover:bg-white group-hover:text-black">
-              PT
-            </span>
+            <>
+              <span className="grid size-10 place-items-center rounded-sm bg-blood text-lg font-black text-white transition duration-300 group-hover:bg-white group-hover:text-black">
+                PT
+              </span>
+              <span className="text-lg font-black tracking-tight text-white">PushTakim</span>
+            </>
           )}
-          <span className="text-lg font-black tracking-tight text-white">PushTakim</span>
         </Link>
-        <div className="hidden items-center gap-1 lg:flex">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="rounded-full px-3 py-2 text-sm font-bold text-zinc-300 transition hover:bg-white/10 hover:text-white"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </div>
+        <HeaderNav variant="desktop" />
         <Link
           href="/events"
-          className="rounded-full border border-blood/70 px-4 py-2 text-sm font-black text-white transition hover:bg-blood"
+          className="motion-button inline-flex min-h-12 items-center justify-center rounded-2xl border border-blood/70 px-4 py-2 text-center text-sm font-black text-white transition duration-300 hover:-translate-y-0.5 hover:bg-blood hover:shadow-[0_14px_50px_rgba(193,18,31,0.22)] active:scale-[0.98]"
         >
           {siteCopy.shared.tickets}
         </Link>
       </nav>
-      <div className="flex gap-2 overflow-x-auto border-t border-white/10 px-5 py-3 sm:px-8 lg:hidden">
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="shrink-0 rounded-full bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300"
-          >
-            {item.label}
-          </Link>
-        ))}
-      </div>
+      <HeaderNav variant="mobile" />
     </header>
   );
 }

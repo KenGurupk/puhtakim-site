@@ -17,7 +17,7 @@ export default function EventsPage() {
       <PageHero {...copy.hero} />
       <Section>
         <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
-          <MediaFrame src="/images/events.jpg" label={copy.mediaLabel} className="min-h-[28rem]" />
+          <MediaFrame src="/images/events-structured.jpg" label={copy.mediaLabel} className="min-h-[28rem]" />
           <div className="grid gap-4">
             {events.map((event, index) => (
               <EventCard key={event.id} event={event} delay={index * 0.05} />
@@ -28,8 +28,8 @@ export default function EventsPage() {
       <Section {...copy.ticketSystem}>
         <div className="grid gap-4 md:grid-cols-3">
           {copy.ticketSystem.items.map((item) => (
-            <div key={item} className="rounded-lg border border-white/10 bg-white/[0.045] p-6">
-              <p className="text-2xl font-black text-white">{item}</p>
+            <div key={item} className="motion-card rounded-2xl border border-white/10 bg-white/[0.045] p-6 shadow-[0_18px_70px_rgba(0,0,0,0.28)]">
+              <p className="text-2xl font-black leading-tight text-white">{item}</p>
             </div>
           ))}
         </div>

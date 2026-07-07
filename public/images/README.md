@@ -2,12 +2,17 @@ PushTakim media files used by the website:
 
 - hero.jpg
 - hero.mp4
-- community.jpg
-- events.jpg
-- workshops.jpg
-- shows.jpg
-- productions.jpg
-- store.jpg
+- logo.png
+- events-structured.jpg
+- workshops-source.jpg
+- shows-source.jpg
+- photo-hero.jpg
+- photo-community.jpg
+- photo-why.jpg
+- photo-takehome.jpg
+- photo-manifesto.jpg
+- store-source.jpg
+- guides-preview.mp4
 
 Optional logo files supported by the header:
 

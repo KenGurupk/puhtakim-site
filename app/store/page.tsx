@@ -12,7 +12,7 @@ export default function StorePage() {
   return (
     <section className="relative isolate min-h-[78vh] overflow-hidden bg-black px-5 py-24 sm:px-8">
       <Image
-        src="/images/store.jpg"
+        src="/images/store-source.jpg"
         alt={copy.headline}
         fill
         sizes="100vw"
@@ -30,7 +30,7 @@ export default function StorePage() {
         </p>
         <Link
           href="/events"
-          className="mt-9 w-fit bg-blood px-7 py-4 text-base font-black text-white transition hover:bg-white hover:text-black"
+          className="motion-button mt-9 inline-flex min-h-14 w-full items-center justify-center rounded-2xl bg-blood px-7 py-4 text-center text-base font-black text-white transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-black active:scale-[0.98] sm:w-fit"
         >
           {copy.cta}
         </Link>

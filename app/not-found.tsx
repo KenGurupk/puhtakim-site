@@ -14,7 +14,7 @@ export default function NotFound() {
       </p>
       <Link
         href="/"
-        className="mt-8 bg-blood px-5 py-3 text-sm font-black text-white transition hover:bg-white hover:text-black"
+        className="motion-button mt-8 inline-flex min-h-12 items-center justify-center rounded-2xl bg-blood px-5 py-3 text-center text-sm font-black text-white transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-black active:scale-[0.98]"
       >
         {siteCopy.shared.backHome}
       </Link>

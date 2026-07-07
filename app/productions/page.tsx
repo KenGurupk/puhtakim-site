@@ -32,11 +32,11 @@ export default function ProductionsPage() {
                 <p key={item} className="border-r-2 border-blood pr-4">{item}</p>
               ))}
             </div>
-            <Link href="/contact" className="mt-8 inline-flex bg-blood px-7 py-4 text-base font-black text-white transition hover:bg-white hover:text-black">
+            <Link href="/contact" className="motion-button mt-8 inline-flex min-h-14 items-center justify-center rounded-2xl bg-blood px-7 py-4 text-center text-base font-black text-white transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-black active:scale-[0.98]">
               {copy.cta}
             </Link>
           </div>
-          <MediaFrame src="/images/productions.jpg" label={copy.mediaLabel} className="min-h-[28rem]" />
+          <MediaFrame src="/images/photo-hero.jpg" label={copy.mediaLabel} className="min-h-[28rem]" />
         </div>
       </Section>
     </>

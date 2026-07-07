@@ -1,7 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { HeroVideo } from "@/components/home/hero-video";
 import { Reveal } from "@/components/motion/reveal";
+import { PushTourPricing } from "@/components/home/push-tour-pricing";
+import { TourJourney } from "@/components/home/tour-journey";
 import { YouTubeGuideCard } from "@/components/ui/youtube-guide-card";
 import { siteCopy } from "@/content/site-copy";
 
@@ -9,86 +12,80 @@ const tourStops = siteCopy.home.tourStops;
 const takeaways = siteCopy.home.takeaways;
 const everythingElse = siteCopy.home.everythingElse;
 const sectionImages: Record<string, string> = {
-  "/community": "/images/community.jpg",
-  "/events": "/images/events2.jpg",
-  "/workshops": "/images/workshops.jpg",
-  "/shows": "/images/shows.jpg",
-  "/productions": "/images/productions2.jpg",
-  "/store": "/images/store2.jpg"
+  "/community": "/images/photo-community.jpg",
+  "/events": "/images/events-structured.jpg",
+  "/workshops": "/images/workshops-source.jpg",
+  "/shows": "/images/shows-source.jpg",
+  "/productions": "/images/photo-hero.jpg",
+  "/store": "/images/store-source.jpg"
 };
 
 export default function HomePage() {
   return (
     <main className="bg-black text-bone">
       <section className="relative isolate min-h-screen overflow-hidden">
-        <Image
-          src="/images/hero.jpg"
-          alt={siteCopy.home.hero.imageAlt}
-          fill
-          priority
-          sizes="100vw"
-          className="bg-black object-contain object-center"
-        />
-        <video
-          className="absolute inset-0 h-full w-full bg-black object-contain object-center"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          poster="/images/hero.jpg"
-          aria-hidden="true"
-        >
-          <source src="/images/hero.mp4" type="video/mp4" />
-        </video>
+        <HeroVideo src="/images/hero.mp4" />
         <div className="absolute inset-0 bg-black/46" />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.92)_0%,rgba(0,0,0,0.58)_43%,rgba(0,0,0,0.16)_100%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,0.92)_0%,rgba(0,0,0,0)_40%,rgba(0,0,0,0.62)_100%)]" />
+        <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-b from-transparent via-black/70 to-black" aria-hidden="true" />
         <div className="absolute right-6 top-[44%] h-56 w-56 -translate-y-1/2 rounded-full bg-blood/22 blur-[100px] sm:h-96 sm:w-96" aria-hidden="true" />
 
-        <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-5 pb-28 pt-32 sm:px-8 lg:pb-32 lg:pt-36">
-          <Reveal>
-            <div className="relative max-w-4xl py-10">
-              <div className="absolute -right-10 top-0 -z-10 h-72 w-80 rounded-full bg-blood/24 blur-[95px]" aria-hidden="true" />
+        <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-5 pb-32 pt-32 sm:px-8 lg:pb-36 lg:pt-36">
+          <div className="motion-hero-copy relative max-w-4xl py-12">
+            <div className="absolute -right-10 top-0 -z-10 h-72 w-80 rounded-full bg-blood/24 blur-[95px]" aria-hidden="true" />
+            <Reveal delay={0.08}>
               <p className="text-sm font-black uppercase tracking-[0.36em] text-white/70 sm:text-base" dir="ltr">
                 PushTakim
               </p>
+            </Reveal>
+            <Reveal delay={0.18}>
               <h1 className="mt-8 text-5xl font-black leading-[1.03] tracking-tight text-white sm:text-7xl lg:text-8xl">
                 {siteCopy.home.hero.headline}
               </h1>
+            </Reveal>
+            <Reveal delay={0.3}>
               <p className="mt-8 max-w-3xl text-3xl font-black leading-tight text-white sm:text-5xl">
                 {siteCopy.home.hero.secondaryTop}
                 <br />
                 {siteCopy.home.hero.secondaryBottom}
               </p>
+            </Reveal>
+            <Reveal delay={0.42}>
               <p className="mt-8 text-2xl font-black text-white/88 sm:text-3xl">
                 {siteCopy.home.hero.finalLine}
               </p>
+            </Reveal>
 
-              <div className="mt-12 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
+            <div className="mt-12 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
+              <Reveal delay={0.54} className="w-full sm:w-auto">
                 <Link
                   href="/community"
-                  className="inline-flex min-h-14 w-full items-center justify-center rounded-2xl bg-blood px-6 py-4 text-center text-base font-black text-white shadow-[0_20px_80px_rgba(193,18,31,0.32)] transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-black sm:w-auto"
+                className="motion-button inline-flex min-h-14 w-full items-center justify-center rounded-2xl bg-blood px-6 py-4 text-center text-base font-black text-white shadow-[0_20px_80px_rgba(193,18,31,0.32)] transition duration-300 hover:-translate-y-1 hover:bg-white hover:text-black hover:shadow-[0_24px_90px_rgba(193,18,31,0.34)] active:scale-[0.98] sm:w-auto"
                 >
                   {siteCopy.home.hero.primaryCta}
                 </Link>
+              </Reveal>
+              <Reveal delay={0.62} className="w-full sm:w-auto">
                 <Link
                   href="/events"
-                  className="inline-flex min-h-14 w-full items-center justify-center rounded-2xl border border-white/35 bg-black/24 px-6 py-4 text-center text-base font-black text-white backdrop-blur-md transition duration-300 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-black sm:w-auto"
+                  className="motion-button inline-flex min-h-14 w-full items-center justify-center rounded-2xl border border-white/35 bg-black/24 px-6 py-4 text-center text-base font-black text-white backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:border-white hover:bg-white hover:text-black hover:shadow-[0_24px_90px_rgba(255,255,255,0.12)] active:scale-[0.98] sm:w-auto"
                 >
                   {siteCopy.home.hero.secondaryCta}
                 </Link>
-              </div>
+              </Reveal>
             </div>
-          </Reveal>
+          </div>
         </div>
 
         <div className="absolute inset-x-0 bottom-8 z-10 flex justify-center">
-          <p className="animate-pulse text-sm font-bold text-white/56">{siteCopy.home.hero.scroll}</p>
+          <Link href="#why" className="scroll-cue text-sm font-bold text-white/56 transition duration-300 hover:text-white">
+            {siteCopy.home.hero.scroll}
+          </Link>
         </div>
       </section>
 
-      <section className="relative overflow-hidden px-5 py-28 sm:px-8 sm:py-36 lg:py-44">
+      <section id="why" className="relative scroll-mt-28 overflow-hidden px-5 py-28 sm:px-8 sm:py-36 lg:py-44">
         <div className="mx-auto grid max-w-7xl gap-14 lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:gap-20">
           <Reveal>
             <div>
@@ -99,16 +96,19 @@ export default function HomePage() {
               <p className="mt-7 max-w-2xl whitespace-pre-line text-lg font-medium leading-9 text-zinc-300 sm:text-xl">
                 {siteCopy.home.why.text}
               </p>
+              <p className="mt-7 max-w-2xl rounded-2xl border border-white/10 bg-white/[0.035] p-5 text-base font-black leading-7 text-white shadow-[0_18px_70px_rgba(0,0,0,0.24)]">
+                {siteCopy.home.why.slogan}
+              </p>
             </div>
           </Reveal>
           <Reveal delay={0.1}>
             <div className="relative min-h-[28rem] overflow-hidden rounded-2xl shadow-[0_24px_90px_rgba(0,0,0,0.45)] sm:min-h-[34rem]">
               <Image
-                src="/images/community.jpg"
+                src="/images/photo-why.jpg"
                 alt={siteCopy.home.why.imageAlt}
                 fill
                 sizes="(min-width: 1024px) 50vw, 100vw"
-                className="object-cover"
+                className="object-cover transition duration-700 hover:scale-[1.02]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/16 to-transparent" />
               <p className="absolute bottom-6 right-6 max-w-sm text-2xl font-black text-white sm:text-3xl">
@@ -119,19 +119,19 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="relative isolate overflow-hidden border-y border-white/10 bg-[#070707] px-5 py-28 sm:px-8 sm:py-36 lg:py-44">
+      <section id="push-tour" className="relative isolate scroll-mt-28 overflow-hidden border-y border-white/10 bg-[#070707] px-5 py-28 sm:px-8 sm:py-36 lg:py-44">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_0%,rgba(193,18,31,0.24),transparent_34rem),linear-gradient(180deg,#050505_0%,#111_48%,#050505_100%)]" />
         <div className="mx-auto max-w-7xl">
           <Reveal>
             <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-end lg:gap-20">
               <div>
                 <p className="text-sm font-black uppercase tracking-[0.28em] text-blood" dir="ltr">PUSH TOUR 2026</p>
-                <h2 className="mt-6 text-5xl font-black leading-none tracking-tight text-white sm:text-7xl" dir="ltr">
-                  4 Gyms.
+                <h2 className="mt-6 text-5xl font-black leading-none tracking-tight text-white sm:text-7xl">
+                  4 אולמות.
                   <br />
-                  5 Cities.
+                  5 ערים.
                   <br />
-                  One Community.
+                  קהילה אחת.
                 </h2>
               </div>
               <div className="max-w-2xl space-y-5 text-lg font-medium leading-8 text-zinc-300">
@@ -151,45 +151,22 @@ export default function HomePage() {
             </div>
           </Reveal>
 
-          <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {tourStops.map((event, index) => (
-              <Reveal key={event.id} delay={index * 0.06} className="h-full">
-                <article className="group relative flex h-full min-h-80 flex-col overflow-hidden rounded-2xl border border-white/10 bg-black/72 p-6 shadow-[0_18px_70px_rgba(0,0,0,0.38)] backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-blood/70 hover:shadow-[0_24px_90px_rgba(193,18,31,0.16)]">
-                  <div className="absolute inset-x-0 top-0 h-1 bg-blood" />
-                  <div className="absolute -left-12 top-10 size-28 rounded-full bg-blood/14 blur-3xl transition group-hover:bg-blood/24" aria-hidden="true" />
-                  <p className="text-xs font-black uppercase tracking-[0.28em] text-blood" dir="ltr">
-                    {event.stop}
-                  </p>
-                  <div className="mt-8">
-                    <h3 className="text-4xl font-black leading-tight text-white">{event.city}</h3>
-                    <p className="mt-5 text-3xl font-black text-white" dir="ltr">{event.date}</p>
-                    {event.time && <p className="mt-2 text-lg font-black text-blood" dir="ltr">{event.time}</p>}
-                  </div>
-                  <p className="mt-8 text-2xl font-black text-white/88">{event.venue}</p>
-                  <p className="mt-3 text-sm font-bold leading-6 text-zinc-400">{event.address}</p>
-                  <Link
-                    href="#contact"
-                    className="mt-auto inline-flex min-h-12 w-full items-center justify-center rounded-2xl bg-blood px-5 py-3 text-sm font-black text-white transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-black sm:w-fit"
-                  >
-                    {siteCopy.home.tour.cardCta}
-                  </Link>
-                </article>
-              </Reveal>
-            ))}
-          </div>
+          <TourJourney stops={tourStops} />
         </div>
       </section>
+
+      <PushTourPricing />
 
       <section className="px-5 py-28 sm:px-8 sm:py-36 lg:py-44">
         <div className="mx-auto grid max-w-7xl gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-20">
           <Reveal>
             <div className="relative min-h-[28rem] overflow-hidden rounded-2xl shadow-[0_24px_90px_rgba(0,0,0,0.45)] sm:min-h-[32rem]">
               <Image
-                src="/images/events2.jpg"
+                src="/images/photo-takehome.jpg"
                 alt={siteCopy.home.takeHome.imageAlt}
                 fill
                 sizes="(min-width: 1024px) 50vw, 100vw"
-                className="object-cover"
+                className="object-cover transition duration-700 hover:scale-[1.02]"
               />
               <div className="absolute inset-0 bg-black/35" />
             </div>
@@ -202,7 +179,7 @@ export default function HomePage() {
               </h2>
               <div className="mt-12 grid gap-5 sm:grid-cols-2">
                 {takeaways.map((item) => (
-                  <div key={item} className="rounded-2xl border border-white/10 bg-white/[0.045] p-6 shadow-[0_18px_70px_rgba(0,0,0,0.28)] transition duration-300 hover:-translate-y-1 hover:border-blood/70 hover:shadow-[0_24px_90px_rgba(193,18,31,0.14)]">
+                  <div key={item} className="motion-card rounded-2xl border border-white/10 bg-white/[0.045] p-6 shadow-[0_18px_70px_rgba(0,0,0,0.28)] transition duration-300 hover:-translate-y-1 hover:border-blood/70 hover:shadow-[0_24px_90px_rgba(193,18,31,0.14)]">
                     <p className="text-2xl font-black text-white">{item}</p>
                   </div>
                 ))}
@@ -230,7 +207,7 @@ export default function HomePage() {
               <Reveal key={item.href} delay={index * 0.06} className="h-full">
                 <Link
                   href={item.href}
-                  className="group flex min-h-72 flex-col justify-end overflow-hidden rounded-2xl border border-white/10 bg-white/[0.045] p-6 shadow-[0_18px_70px_rgba(0,0,0,0.32)] transition duration-300 hover:-translate-y-1 hover:border-blood/70 hover:shadow-[0_24px_90px_rgba(193,18,31,0.14)]"
+                  className="motion-card group flex min-h-72 flex-col justify-end overflow-hidden rounded-2xl border border-white/10 bg-white/[0.045] p-6 shadow-[0_18px_70px_rgba(0,0,0,0.32)] transition duration-300 hover:-translate-y-1 hover:border-blood/70 hover:shadow-[0_24px_90px_rgba(193,18,31,0.14)]"
                 >
                   <div className="relative mb-auto h-32 overflow-hidden rounded-2xl bg-[#090909] transition duration-300 group-hover:scale-[1.02]">
                     {sectionImages[item.href] ? (
@@ -240,7 +217,7 @@ export default function HomePage() {
                           alt={item.title}
                           fill
                           sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
-                          className="object-cover"
+                          className="object-cover transition duration-700 group-hover:scale-[1.04]"
                         />
                         <div className="absolute inset-0 bg-black/30" />
                       </>
@@ -270,7 +247,7 @@ export default function HomePage() {
               </p>
               <Link
                 href="https://youtube.com/@pushtakim692"
-                className="mt-12 inline-flex min-h-14 w-full items-center justify-center rounded-2xl bg-blood px-8 py-4 text-center text-base font-black text-white shadow-[0_20px_80px_rgba(193,18,31,0.28)] transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-black sm:w-auto"
+                className="motion-button mt-12 inline-flex min-h-14 w-full items-center justify-center rounded-2xl bg-blood px-8 py-4 text-center text-base font-black text-white shadow-[0_20px_80px_rgba(193,18,31,0.28)] transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-black active:scale-[0.98] sm:w-auto"
               >
                 {siteCopy.home.guides.cta}
               </Link>
@@ -299,24 +276,24 @@ export default function HomePage() {
             <div className="grid gap-5 sm:grid-cols-3">
               <a
                 href="https://wa.me/972547632268"
-                className="rounded-2xl border border-white/10 bg-white/[0.045] p-6 shadow-[0_18px_70px_rgba(0,0,0,0.32)] transition duration-300 hover:-translate-y-1 hover:border-blood/70 hover:shadow-[0_24px_90px_rgba(193,18,31,0.14)]"
+                className="rounded-2xl border border-white/10 bg-white/[0.045] p-6 shadow-[0_18px_70px_rgba(0,0,0,0.32)] transition duration-300 hover:-translate-y-1 hover:border-blood/70 hover:shadow-[0_24px_90px_rgba(193,18,31,0.14)] active:scale-[0.98]"
               >
                 <p className="text-sm font-black text-blood">WhatsApp</p>
                 <p className="mt-4 text-2xl font-black text-white" dir="ltr">0547632268</p>
               </a>
               <a
                 href="https://www.instagram.com/_pushtakim_"
-                className="rounded-2xl border border-white/10 bg-white/[0.045] p-6 shadow-[0_18px_70px_rgba(0,0,0,0.32)] transition duration-300 hover:-translate-y-1 hover:border-blood/70 hover:shadow-[0_24px_90px_rgba(193,18,31,0.14)]"
+                className="rounded-2xl border border-white/10 bg-white/[0.045] p-6 shadow-[0_18px_70px_rgba(0,0,0,0.32)] transition duration-300 hover:-translate-y-1 hover:border-blood/70 hover:shadow-[0_24px_90px_rgba(193,18,31,0.14)] active:scale-[0.98]"
               >
                 <p className="text-sm font-black text-blood">Instagram</p>
                 <p className="mt-4 text-2xl font-black text-white" dir="ltr">@_pushtakim_</p>
               </a>
               <a
                 href="https://youtube.com/@pushtakim692"
-                className="rounded-2xl border border-white/10 bg-white/[0.045] p-6 shadow-[0_18px_70px_rgba(0,0,0,0.32)] transition duration-300 hover:-translate-y-1 hover:border-blood/70 hover:shadow-[0_24px_90px_rgba(193,18,31,0.14)]"
+                className="rounded-2xl border border-white/10 bg-white/[0.045] p-6 shadow-[0_18px_70px_rgba(0,0,0,0.32)] transition duration-300 hover:-translate-y-1 hover:border-blood/70 hover:shadow-[0_24px_90px_rgba(193,18,31,0.14)] active:scale-[0.98]"
               >
                 <p className="text-sm font-black text-blood">YouTube</p>
-                <p className="mt-4 text-2xl font-black text-white" dir="ltr">@pushtakim692</p>
+                <p className="mt-4 text-2xl font-black text-white" dir="ltr">PushTakim</p>
               </a>
             </div>
           </Reveal>
@@ -325,7 +302,7 @@ export default function HomePage() {
 
       <section className="relative isolate min-h-[82vh] overflow-hidden px-5 py-28 sm:px-8 sm:py-36 lg:py-44">
         <Image
-          src="/images/productions3.jpg"
+          src="/images/photo-manifesto.jpg"
           alt={siteCopy.home.manifesto.imageAlt}
           fill
           sizes="100vw"
@@ -347,7 +324,7 @@ export default function HomePage() {
               </p>
               <Link
                 href="/events"
-                className="mt-12 inline-flex min-h-14 w-full items-center justify-center rounded-2xl bg-blood px-8 py-4 text-center text-base font-black text-white shadow-[0_20px_80px_rgba(193,18,31,0.28)] transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-black sm:w-auto"
+                className="motion-button mt-12 inline-flex min-h-14 w-full items-center justify-center rounded-2xl bg-blood px-8 py-4 text-center text-base font-black text-white shadow-[0_20px_80px_rgba(193,18,31,0.28)] transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-black active:scale-[0.98] sm:w-auto"
               >
                 {siteCopy.home.manifesto.cta}
               </Link>

@@ -13,7 +13,7 @@ export function ContactForm() {
 
   return (
     <form
-      className="grid gap-5 rounded-lg border border-white/10 bg-white/[0.045] p-5 sm:p-8"
+      className="grid gap-5 rounded-2xl border border-white/10 bg-white/[0.045] p-5 sm:p-8"
       onSubmit={async (event) => {
         event.preventDefault();
         setStatus("sending");
@@ -41,7 +41,7 @@ export function ContactForm() {
           <input
             name="name"
             required
-            className="rounded-md border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-citron"
+            className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-blood"
             autoComplete="name"
           />
         </label>
@@ -51,7 +51,7 @@ export function ContactForm() {
             name="email"
             type="email"
             required
-            className="rounded-md border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-citron"
+            className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-blood"
             autoComplete="email"
           />
         </label>
@@ -62,7 +62,7 @@ export function ContactForm() {
           name="type"
           value={type}
           onChange={(event) => setType(event.target.value as ContactInquiryType)}
-          className="rounded-md border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-citron"
+          className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-blood"
         >
           {inquiryTypes.map((item) => (
             <option key={item}>{item}</option>
@@ -75,23 +75,23 @@ export function ContactForm() {
           name="message"
           required
           rows={6}
-          className="resize-none rounded-md border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-citron"
+          className="resize-none rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition focus:border-blood"
         />
       </label>
       <button
         type="submit"
         disabled={status === "sending"}
-        className="w-fit rounded-full bg-citron px-5 py-3 text-sm font-black text-ink transition hover:bg-white"
+        className="motion-button inline-flex min-h-12 w-full items-center justify-center rounded-2xl bg-blood px-5 py-3 text-center text-sm font-black text-white transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-black active:scale-[0.98] sm:w-fit"
       >
         {status === "sending" ? siteCopy.contact.form.sending : siteCopy.contact.form.submit}
       </button>
       {status === "sent" && (
-        <p className="rounded-md border border-lagoon/30 bg-lagoon/10 px-4 py-3 text-sm font-semibold text-lagoon">
+        <p className="rounded-2xl border border-blood/30 bg-blood/10 px-4 py-3 text-sm font-semibold text-white">
           {siteCopy.contact.form.success}
         </p>
       )}
       {status === "error" && (
-        <p className="rounded-md border border-ember/30 bg-ember/10 px-4 py-3 text-sm font-semibold text-ember">
+        <p className="rounded-2xl border border-blood/30 bg-blood/10 px-4 py-3 text-sm font-semibold text-white">
           {siteCopy.contact.form.error}
         </p>
       )}

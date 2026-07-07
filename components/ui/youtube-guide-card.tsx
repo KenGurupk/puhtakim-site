@@ -4,15 +4,30 @@ type YouTubeGuideCardProps = {
   title: string;
   eyebrow: string;
   href: string;
+  previewVideo?: string;
 };
 
-export function YouTubeGuideCard({ title, eyebrow, href }: YouTubeGuideCardProps) {
+export function YouTubeGuideCard({ title, eyebrow, href, previewVideo }: YouTubeGuideCardProps) {
   return (
     <Link
       href={href}
       className="group relative block overflow-hidden rounded-2xl border border-white/10 bg-black shadow-[0_24px_90px_rgba(0,0,0,0.45)] transition duration-500 hover:-translate-y-1 hover:border-blood/70 hover:shadow-[0_28px_100px_rgba(193,18,31,0.18)]"
     >
-      <div className="aspect-[9/16] min-h-[34rem] bg-[radial-gradient(circle_at_50%_38%,rgba(193,18,31,0.28),transparent_12rem),linear-gradient(145deg,#111_0%,#050505_58%,#190608_100%)] sm:aspect-video lg:aspect-[9/16]" />
+      <div className="aspect-[9/16] min-h-[34rem] bg-[radial-gradient(circle_at_50%_38%,rgba(193,18,31,0.28),transparent_12rem),linear-gradient(145deg,#111_0%,#050505_58%,#190608_100%)] sm:aspect-video lg:aspect-[9/16]">
+        {previewVideo && (
+          <video
+            className="h-full w-full object-cover opacity-72 transition duration-500 group-hover:scale-105 group-hover:opacity-90"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            aria-hidden="true"
+          >
+            <source src={previewVideo} type="video/mp4" />
+          </video>
+        )}
+      </div>
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08),rgba(0,0,0,0.78))]" />
       <div className="absolute inset-0 grid place-items-center p-8 text-center">
         <div>
