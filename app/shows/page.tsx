@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { FeatureCard } from "@/components/cards/feature-card";
+import { Reveal } from "@/components/motion/reveal";
 import { MediaFrame } from "@/components/ui/media-frame";
 import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
@@ -37,19 +38,21 @@ export default function ShowsPage() {
             { src: "/drive-assets/shows/shows-crowd.jpg", className: "lg:col-span-2" },
             { src: "/drive-assets/shows/shows-rooftop-air.jpg", className: "" },
             { src: "/drive-assets/shows/shows-urban-motion.jpg", className: "" },
-            { src: "/drive-assets/curated/shows-stage.jpg", className: "lg:col-span-2" }
-          ].map((item) => (
-            <div key={item.src} className={`relative min-h-[18rem] overflow-hidden rounded-2xl border border-white/10 bg-[#090909] shadow-[0_18px_70px_rgba(0,0,0,0.28)] transition duration-500 hover:-translate-y-1 hover:border-blood/50 ${item.className}`}>
-              <Image
-                src={item.src}
-                alt={copy.hero.title}
-                fill
-                sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
-                quality={70}
-                className="object-cover transition duration-700 hover:scale-[1.04]"
-              />
-              <div className="absolute inset-0 bg-black/25" />
-            </div>
+            { src: "/drive-assets/curated/events-night.jpg", className: "lg:col-span-2" }
+          ].map((item, index) => (
+            <Reveal key={item.src} delay={index * 0.06} className={item.className}>
+              <div className="motion-card image-reveal relative min-h-[18rem] overflow-hidden rounded-2xl border border-white/10 bg-[#090909] shadow-[0_18px_70px_rgba(0,0,0,0.28)] transition duration-500 hover:-translate-y-1 hover:border-blood/50">
+                <Image
+                  src={item.src}
+                  alt={copy.hero.title}
+                  fill
+                  sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
+                  quality={70}
+                  className="object-cover transition duration-700 hover:scale-[1.04]"
+                />
+                <div className="absolute inset-0 bg-black/25" />
+              </div>
+            </Reveal>
           ))}
         </div>
       </Section>

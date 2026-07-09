@@ -136,6 +136,26 @@ select {
   box-shadow: 0 26px 96px rgba(193, 18, 31, 0.15), 0 18px 70px rgba(0, 0, 0, 0.32);
 }
 
+.image-reveal {
+  isolation: isolate;
+}
+
+.image-reveal::before {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  content: "";
+  pointer-events: none;
+  background: linear-gradient(90deg, #050505 0%, rgba(5, 5, 5, 0.68) 38%, transparent 100%);
+  transform: translateX(105%);
+  animation: image-reveal-swipe 0.95s var(--motion-ease) 0.08s both;
+}
+
+.image-reveal:hover img,
+.image-reveal:hover video {
+  transform: scale(1.045);
+}
+
 .motion-hero-copy {
   animation: hero-copy-in 1.05s var(--motion-ease) both;
 }
@@ -236,6 +256,18 @@ select {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes image-reveal-swipe {
+  from {
+    opacity: 0.72;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(-105%);
   }
 }
 

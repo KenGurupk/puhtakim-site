@@ -15,7 +15,7 @@ export function MediaFrame({ label, className = "", src, alt = label, poster, fi
   const mediaFit = fit === "contain" ? "object-contain" : "object-cover";
 
   return (
-    <div className={`motion-card group relative box-border aspect-[4/5] min-h-72 w-full max-w-full overflow-hidden rounded-2xl border border-white/10 bg-[#090909] shadow-[0_18px_70px_rgba(0,0,0,0.32)] transition duration-500 hover:-translate-y-1 hover:border-blood/60 hover:shadow-[0_24px_90px_rgba(193,18,31,0.14)] lg:aspect-[16/11] ${className}`}>
+    <div className={`motion-card image-reveal group relative box-border aspect-[4/5] min-h-72 w-full max-w-full overflow-hidden rounded-2xl border border-white/10 bg-[#090909] shadow-[0_18px_70px_rgba(0,0,0,0.32)] transition duration-500 hover:-translate-y-1 hover:border-blood/60 hover:shadow-[0_24px_90px_rgba(193,18,31,0.14)] lg:aspect-[16/11] ${className}`}>
       {src && isVideo ? (
         <video
           className={`absolute inset-0 h-full w-full ${mediaFit} transition duration-700 group-hover:scale-[1.03]`}
