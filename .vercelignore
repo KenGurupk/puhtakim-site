@@ -1,12 +1,7 @@
+.tmp
 .next
 node_modules
 out
 dist
-.env
-.env.local
-.env*.local
 *.log
 public/videos/intro.mp4
-
-.vercel
-.env*
