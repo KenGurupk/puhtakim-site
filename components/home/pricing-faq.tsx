@@ -17,7 +17,7 @@ export function PricingFaq({ title, items }: PricingFaqProps) {
     <div className="mt-14 grid gap-5 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
       <div className="max-w-xl">
         <p className="text-sm font-black uppercase tracking-[0.28em] text-blood">
-          שאלות נפוצות
+          לפני שנכנסים
         </p>
         <h3 className="mt-4 text-3xl font-black leading-tight text-white sm:text-5xl">
           {title}

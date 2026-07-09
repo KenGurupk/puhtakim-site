@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { HeroVideo } from "@/components/home/hero-video";
+import { MoveShowcase } from "@/components/home/move-showcase";
 import { Reveal } from "@/components/motion/reveal";
 import { PushTourPricing } from "@/components/home/push-tour-pricing";
 import { TourJourney } from "@/components/home/tour-journey";
@@ -12,12 +13,12 @@ const tourStops = siteCopy.home.tourStops;
 const takeaways = siteCopy.home.takeaways;
 const everythingElse = siteCopy.home.everythingElse;
 const sectionImages: Record<string, string> = {
-  "/community": "/images/photo-community.jpg",
-  "/events": "/images/events-structured.jpg",
-  "/workshops": "/images/workshops-source.jpg",
-  "/shows": "/images/shows-source.jpg",
-  "/productions": "/images/photo-hero.jpg",
-  "/store": "/images/store-source.jpg"
+  "/community": "/drive-assets/curated/community-group.jpg",
+  "/events": "/drive-assets/curated/homepage-community.jpg",
+  "/workshops": "/drive-assets/curated/workshops-session.jpg",
+  "/shows": "/drive-assets/curated/shows-stage.jpg",
+  "/productions": "/drive-assets/curated/production-commercial.jpg",
+  "/store": "/drive-assets/curated/store-lifestyle.jpg"
 };
 
 export default function HomePage() {
@@ -26,13 +27,15 @@ export default function HomePage() {
       <section className="relative isolate min-h-screen overflow-hidden">
         <HeroVideo src="/images/hero.mp4" />
         <div className="absolute inset-0 bg-black/46" />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.92)_0%,rgba(0,0,0,0.58)_43%,rgba(0,0,0,0.16)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(270deg,rgba(0,0,0,0.95)_0%,rgba(0,0,0,0.68)_42%,rgba(0,0,0,0.22)_72%,rgba(0,0,0,0.06)_100%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(0,0,0,0.92)_0%,rgba(0,0,0,0)_40%,rgba(0,0,0,0.62)_100%)]" />
         <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-b from-transparent via-black/70 to-black" aria-hidden="true" />
         <div className="absolute right-6 top-[44%] h-56 w-56 -translate-y-1/2 rounded-full bg-blood/22 blur-[100px] sm:h-96 sm:w-96" aria-hidden="true" />
 
         <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-5 pb-32 pt-32 sm:px-8 lg:pb-36 lg:pt-36">
           <div className="motion-hero-copy relative max-w-4xl py-12">
+            <div className="absolute inset-y-0 -left-4 -right-8 -z-10 rounded-[2rem] bg-black/68 blur-2xl sm:-left-10 sm:-right-14" aria-hidden="true" />
+            <div className="absolute inset-y-8 -left-2 -right-6 -z-10 rounded-[1.75rem] bg-gradient-to-l from-black/78 via-black/48 to-transparent sm:-left-8 sm:-right-12" aria-hidden="true" />
             <div className="absolute -right-10 top-0 -z-10 h-72 w-80 rounded-full bg-blood/24 blur-[95px]" aria-hidden="true" />
             <Reveal delay={0.08}>
               <p className="text-sm font-black uppercase tracking-[0.36em] text-white/70 sm:text-base" dir="ltr">
@@ -104,7 +107,7 @@ export default function HomePage() {
           <Reveal delay={0.1}>
             <div className="relative min-h-[28rem] overflow-hidden rounded-2xl shadow-[0_24px_90px_rgba(0,0,0,0.45)] sm:min-h-[34rem]">
               <Image
-                src="/images/photo-why.jpg"
+                src="/drive-assets/curated/community-group.jpg"
                 alt={siteCopy.home.why.imageAlt}
                 fill
                 sizes="(min-width: 1024px) 50vw, 100vw"
@@ -162,7 +165,7 @@ export default function HomePage() {
           <Reveal>
             <div className="relative min-h-[28rem] overflow-hidden rounded-2xl shadow-[0_24px_90px_rgba(0,0,0,0.45)] sm:min-h-[32rem]">
               <Image
-                src="/images/photo-takehome.jpg"
+                src="/drive-assets/curated/homepage-community.jpg"
                 alt={siteCopy.home.takeHome.imageAlt}
                 fill
                 sizes="(min-width: 1024px) 50vw, 100vw"
@@ -216,7 +219,8 @@ export default function HomePage() {
                           src={sectionImages[item.href]}
                           alt={item.title}
                           fill
-                          sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
+                          sizes="(min-width: 1280px) 320px, (min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
+                          quality={70}
                           className="object-cover transition duration-700 group-hover:scale-[1.04]"
                         />
                         <div className="absolute inset-0 bg-black/30" />
@@ -234,15 +238,17 @@ export default function HomePage() {
         </div>
       </section>
 
+      <MoveShowcase />
+
       <section id="guides" className="px-5 py-28 sm:px-8 sm:py-36 lg:py-44">
-        <div className="mx-auto grid max-w-7xl gap-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-20">
-          <Reveal>
-            <div>
-              <p className="text-sm font-black uppercase tracking-[0.28em] text-blood">{siteCopy.home.guides.eyebrow}</p>
-              <h2 className="mt-6 text-4xl font-black leading-tight text-white sm:text-6xl lg:text-7xl">
+        <div className="mx-auto grid max-w-7xl min-w-0 gap-14 overflow-hidden lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-20">
+          <Reveal className="min-w-0">
+            <div className="min-w-0">
+              <p className="break-words text-sm font-black uppercase tracking-[0.28em] text-blood">{siteCopy.home.guides.eyebrow}</p>
+              <h2 className="mt-6 break-words text-4xl font-black leading-tight text-white sm:text-6xl lg:text-7xl">
                 {siteCopy.home.guides.headline}
               </h2>
-              <p className="mt-7 max-w-2xl text-lg font-medium leading-8 text-zinc-300">
+              <p className="mt-7 max-w-2xl break-words text-lg font-medium leading-8 text-zinc-300">
                 {siteCopy.home.guides.description}
               </p>
               <Link
@@ -253,7 +259,7 @@ export default function HomePage() {
               </Link>
             </div>
           </Reveal>
-          <Reveal delay={0.1}>
+          <Reveal delay={0.1} className="min-w-0">
             <YouTubeGuideCard {...siteCopy.home.guides.videos[0]} />
           </Reveal>
         </div>
@@ -302,7 +308,7 @@ export default function HomePage() {
 
       <section className="relative isolate min-h-[82vh] overflow-hidden px-5 py-28 sm:px-8 sm:py-36 lg:py-44">
         <Image
-          src="/images/photo-manifesto.jpg"
+          src="/drive-assets/curated/homepage-manifesto.jpg"
           alt={siteCopy.home.manifesto.imageAlt}
           fill
           sizes="100vw"

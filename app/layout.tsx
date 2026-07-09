@@ -5,6 +5,7 @@ import "@/app/globals.css";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
 import { CursorTrail } from "@/components/motion/cursor-trail";
+import { SoundInteractions } from "@/components/motion/sound-interactions";
 import { siteCopy } from "@/content/site-copy";
 
 const notoSansHebrew = Noto_Sans_Hebrew({
@@ -13,8 +14,10 @@ const notoSansHebrew = Noto_Sans_Hebrew({
   display: "swap"
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://pushtakim.co.il";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://pushtakim.com"),
+  metadataBase: new URL(siteUrl),
   title: {
     default: "PushTakim",
     template: "%s | PushTakim"
@@ -23,7 +26,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "PushTakim",
     description: siteCopy.metadata.openGraphDescription,
-    url: "https://pushtakim.com",
+    url: siteUrl,
     siteName: "PushTakim",
     type: "website"
   }
@@ -39,6 +42,7 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         <div className="noise" aria-hidden="true" />
         <CursorTrail />
+        <SoundInteractions />
         <Header />
         <main>{children}</main>
         <Footer />

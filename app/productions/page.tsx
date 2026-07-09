@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
 import { FeatureCard } from "@/components/cards/feature-card";
@@ -36,7 +37,42 @@ export default function ProductionsPage() {
               {copy.cta}
             </Link>
           </div>
-          <MediaFrame src="/images/photo-hero.jpg" label={copy.mediaLabel} className="min-h-[28rem]" />
+          <MediaFrame src="/drive-assets/curated/production-commercial.jpg" label={copy.mediaLabel} className="min-h-[28rem]" />
+        </div>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-[0.85fr_1.15fr]">
+          {[
+            "/drive-assets/productions/production-urban.jpg",
+            "/drive-assets/productions/production-air.jpg",
+            "/drive-assets/productions/production-dome.jpg",
+            "/drive-assets/productions/production-color.jpg"
+          ].map((src, index) => (
+            <div key={src} className={`relative overflow-hidden rounded-2xl border border-white/10 bg-[#090909] shadow-[0_18px_70px_rgba(0,0,0,0.28)] transition duration-500 hover:-translate-y-1 hover:border-blood/50 ${index === 1 ? "min-h-[30rem] sm:row-span-2" : "min-h-[22rem]"}`}>
+              <Image
+                src={src}
+                alt={copy.hero.title}
+                fill
+                sizes="(min-width: 768px) 50vw, 100vw"
+                quality={70}
+                className="object-contain p-2 transition duration-700 hover:scale-[1.03]"
+              />
+              <div className="absolute inset-0 bg-black/12" />
+            </div>
+          ))}
+        </div>
+      </Section>
+      <Section {...copy.featured}>
+        <div className="grid gap-4 md:grid-cols-3">
+          {copy.featured.items.map((item) => (
+            <Link
+              key={item.title}
+              href={item.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="motion-card rounded-2xl border border-white/10 bg-white/[0.045] p-6 text-center shadow-[0_18px_70px_rgba(0,0,0,0.28)] transition duration-300 hover:-translate-y-1 hover:border-blood/60 hover:shadow-[0_24px_90px_rgba(193,18,31,0.14)]"
+            >
+              <p className="text-2xl font-black text-white">{item.title}</p>
+            </Link>
+          ))}
         </div>
       </Section>
     </>

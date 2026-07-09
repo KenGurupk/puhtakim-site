@@ -30,13 +30,14 @@ export function PushTourPricing() {
           </p>
         </Reveal>
 
-        <div className="mt-12 grid gap-5 lg:grid-cols-3 lg:items-center">
+        <div className="mt-12 grid gap-5 sm:grid-cols-2 xl:grid-cols-4 xl:items-center">
           {pricing.plans.map((plan, index) => {
-            const role = plan.id === "ultimate" ? "חוויה מלאה" : plan.id === "three-halls" ? "הבחירה המשתלמת" : "כניסה ראשונה";
+            const role = plan.id === "ultimate" ? "חוויה מלאה" : plan.id === "three-halls" ? "הבחירה המשתלמת" : plan.id === "mabuza-early-bird" ? "הצעת פתיחה" : "כניסה ראשונה";
+            const availability = "availabilityKey" in plan && plan.availabilityKey === "earlyBirdMabuza" ? pricing.availability.earlyBirdMabuza : undefined;
 
             return (
               <Reveal key={plan.id} delay={index * 0.07} className="h-full">
-                <TicketPlanCard plan={plan} role={role} health={pricing.health} />
+                <TicketPlanCard plan={plan} role={role} health={pricing.health} availability={availability} />
               </Reveal>
             );
           })}
@@ -48,7 +49,7 @@ export function PushTourPricing() {
               <table className="w-full min-w-[44rem] border-collapse text-right">
                 <thead>
                   <tr className="border-b border-white/10 bg-white/[0.025]">
-                    <th className="px-6 py-6 text-sm font-black text-blood">השוואה מהירה</th>
+                    <th className="px-6 py-6 text-sm font-black text-blood">מה מתאים לכם?</th>
                     {pricing.comparison.columns.map((column) => (
                       <th key={column} className="px-6 py-6 text-sm font-black text-white">
                         {column}

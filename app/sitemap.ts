@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 const routes = ["", "/community", "/events", "/workshops", "/shows", "/productions", "/store", "/guides", "/contact"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://pushtakim.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://pushtakim.co.il";
 
   return routes.map((route) => ({
     url: `${siteUrl}${route}`,

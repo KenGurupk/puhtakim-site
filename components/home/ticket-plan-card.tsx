@@ -11,6 +11,10 @@ type TicketPlan = {
   originalPrice?: string;
   badge?: string;
   saving?: string;
+  event?: string;
+  offerText?: string;
+  returnText?: string;
+  availabilityKey?: string;
   description: string;
   benefits: readonly string[];
   cta: string;
@@ -29,18 +33,27 @@ type HealthCopy = {
   readFull: string;
 };
 
+type TicketAvailability = {
+  total: number;
+  sold: number;
+  remaining: number;
+  status: string;
+};
+
 type TicketPlanCardProps = {
   plan: TicketPlan;
   role: string;
   health: HealthCopy;
+  availability?: TicketAvailability;
 };
 
-export function TicketPlanCard({ plan, role, health }: TicketPlanCardProps) {
+export function TicketPlanCard({ plan, role, health, availability }: TicketPlanCardProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [fitnessConfirmed, setFitnessConfirmed] = useState(false);
   const [termsConfirmed, setTermsConfirmed] = useState(false);
   const [showFullStatement, setShowFullStatement] = useState(false);
   const isFeatured = Boolean(plan.featured);
+  const isLaunchOffer = plan.id === "mabuza-early-bird";
   const canContinue = fitnessConfirmed && termsConfirmed;
 
   function closeModal() {
@@ -54,13 +67,15 @@ export function TicketPlanCard({ plan, role, health }: TicketPlanCardProps) {
     <>
       <article
         className={`motion-card group relative flex h-full min-h-[44rem] flex-col overflow-hidden rounded-2xl border p-6 transition duration-300 hover:-translate-y-1.5 sm:p-7 ${
-          isFeatured
+          isLaunchOffer
+            ? "border-amber-300/45 bg-[linear-gradient(145deg,rgba(193,18,31,0.28),rgba(255,255,255,0.07)_48%,rgba(245,158,11,0.16))] shadow-[0_30px_110px_rgba(193,18,31,0.18)] hover:border-amber-200/70 hover:shadow-[0_36px_130px_rgba(245,158,11,0.18)]"
+            : isFeatured
             ? "border-amber-300/45 bg-[linear-gradient(145deg,rgba(193,18,31,0.25),rgba(255,255,255,0.07)_45%,rgba(245,158,11,0.12))] shadow-[0_32px_120px_rgba(245,158,11,0.17)] hover:shadow-[0_36px_130px_rgba(245,158,11,0.22)] lg:scale-[1.045]"
             : "border-white/10 bg-white/[0.045] shadow-[0_20px_80px_rgba(0,0,0,0.34)] hover:border-blood/60 hover:shadow-[0_26px_100px_rgba(193,18,31,0.14)]"
         }`}
       >
         <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-l from-blood via-red-900 to-transparent" />
-        {isFeatured && (
+        {(isFeatured || isLaunchOffer) && (
           <div className="absolute inset-x-6 top-0 h-24 bg-amber-300/10 blur-3xl" aria-hidden="true" />
         )}
         <div className="relative">
@@ -69,7 +84,7 @@ export function TicketPlanCard({ plan, role, health }: TicketPlanCardProps) {
               {plan.eyebrow}
             </p>
             <div className="flex min-h-8 flex-wrap items-center justify-center gap-2 sm:justify-start">
-              <span className={`inline-flex min-h-8 items-center justify-center rounded-full px-3.5 py-1 text-center text-xs font-black leading-none ${isFeatured ? "bg-amber-300 text-black" : "bg-white/10 text-white/78"}`}>
+              <span className={`inline-flex min-h-8 items-center justify-center rounded-full px-3.5 py-1 text-center text-xs font-black leading-none ${isFeatured || isLaunchOffer ? "bg-amber-300 text-black" : "bg-white/10 text-white/78"}`}>
                 {role}
               </span>
               {plan.badge && (
@@ -80,6 +95,11 @@ export function TicketPlanCard({ plan, role, health }: TicketPlanCardProps) {
             </div>
           </div>
           <h3 className="mt-6 min-h-20 text-3xl font-black leading-tight text-white">{plan.title}</h3>
+          {plan.event && (
+            <p className="mt-3 rounded-2xl border border-white/10 bg-black/28 px-4 py-3 text-sm font-black leading-6 text-white/82">
+              {plan.event}
+            </p>
+          )}
           <div className="mt-6 flex min-h-16 flex-wrap items-end gap-3">
             <p className="text-6xl font-black leading-none text-white" dir="ltr">
               {plan.price}
@@ -90,13 +110,32 @@ export function TicketPlanCard({ plan, role, health }: TicketPlanCardProps) {
               </p>
             )}
           </div>
-          <div className="mt-4 flex min-h-12 items-start">
+          <div className="mt-4 grid min-h-12 gap-3">
             {plan.saving && (
               <p className="w-fit rounded-full bg-amber-300/12 px-4 py-2 text-sm font-black text-amber-200">
                 {plan.saving}
               </p>
             )}
+            {availability && (
+              <p className="w-fit rounded-full border border-blood/50 bg-blood/14 px-4 py-2 text-sm font-black text-white">
+                נשארו{" "}
+                <span className="text-blood drop-shadow-[0_0_16px_rgba(193,18,31,0.65)]">
+                  {availability.remaining} מתוך {availability.total}
+                </span>{" "}
+                כרטיסים מוזלים
+              </p>
+            )}
           </div>
+          {plan.offerText && (
+            <p className="mt-5 text-base font-black leading-7 text-white">
+              {plan.offerText}
+            </p>
+          )}
+          {plan.returnText && (
+            <p className="mt-2 text-sm font-bold leading-6 text-amber-200">
+              {plan.returnText}
+            </p>
+          )}
           <p className="mt-6 min-h-28 text-base font-medium leading-7 text-zinc-300">{plan.description}</p>
         </div>
 
@@ -113,7 +152,7 @@ export function TicketPlanCard({ plan, role, health }: TicketPlanCardProps) {
           type="button"
           onClick={() => setIsOpen(true)}
           className={`motion-button relative mt-auto inline-flex min-h-14 w-full items-center justify-center rounded-2xl px-6 py-4 text-center text-base font-black transition duration-300 hover:-translate-y-0.5 active:scale-[0.98] ${
-            isFeatured
+            isFeatured || isLaunchOffer
               ? "bg-amber-300 text-black shadow-[0_18px_70px_rgba(245,158,11,0.24)] hover:bg-white hover:shadow-[0_24px_90px_rgba(245,158,11,0.28)]"
               : "bg-blood text-white shadow-[0_18px_70px_rgba(193,18,31,0.22)] hover:bg-white hover:text-black hover:shadow-[0_22px_86px_rgba(193,18,31,0.24)]"
           }`}

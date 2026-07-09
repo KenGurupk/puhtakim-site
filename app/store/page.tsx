@@ -12,10 +12,11 @@ export default function StorePage() {
   return (
     <section className="relative isolate min-h-[78vh] overflow-hidden bg-black px-5 py-24 sm:px-8">
       <Image
-        src="/images/store-source.jpg"
+        src="/drive-assets/store/store-worn-01.jpg"
         alt={copy.headline}
         fill
         sizes="100vw"
+        quality={72}
         className="-z-20 object-cover"
       />
       <div className="absolute inset-0 -z-10 bg-black/72" />
@@ -34,6 +35,27 @@ export default function StorePage() {
         >
           {copy.cta}
         </Link>
+        <div className="mt-10 grid max-w-4xl gap-3 sm:grid-cols-4">
+          {[
+            { src: "/drive-assets/store/store-cover.jpg", position: "50% 42%" },
+            { src: "/drive-assets/store/store-worn-02.jpg", position: "50% 38%" },
+            { src: "/drive-assets/store/store-worn-03.jpg", position: "50% 36%" },
+            { src: "/drive-assets/store/store-detail.jpg", position: "50% 50%" }
+          ].map((item) => (
+            <div key={item.src} className="relative min-h-44 overflow-hidden rounded-2xl border border-white/10 bg-black/40 shadow-[0_18px_70px_rgba(0,0,0,0.28)]">
+              <Image
+                src={item.src}
+                alt={copy.headline}
+                fill
+                sizes="(min-width: 640px) 33vw, 100vw"
+                quality={70}
+                className="object-cover"
+                style={{ objectPosition: item.position }}
+              />
+              <div className="absolute inset-0 bg-black/20" />
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

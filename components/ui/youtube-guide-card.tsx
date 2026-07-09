@@ -11,7 +11,7 @@ export function YouTubeGuideCard({ title, eyebrow, href, previewVideo }: YouTube
   return (
     <Link
       href={href}
-      className="group relative block overflow-hidden rounded-2xl border border-white/10 bg-black shadow-[0_24px_90px_rgba(0,0,0,0.45)] transition duration-500 hover:-translate-y-1 hover:border-blood/70 hover:shadow-[0_28px_100px_rgba(193,18,31,0.18)]"
+      className="group relative block w-full max-w-full overflow-hidden rounded-2xl border border-white/10 bg-black shadow-[0_24px_90px_rgba(0,0,0,0.45)] transition duration-500 hover:-translate-y-1 hover:border-blood/70 hover:shadow-[0_28px_100px_rgba(193,18,31,0.18)]"
     >
       <div className="aspect-[9/16] min-h-[34rem] bg-[radial-gradient(circle_at_50%_38%,rgba(193,18,31,0.28),transparent_12rem),linear-gradient(145deg,#111_0%,#050505_58%,#190608_100%)] sm:aspect-video lg:aspect-[9/16]">
         {previewVideo && (

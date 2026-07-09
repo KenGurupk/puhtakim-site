@@ -17,7 +17,7 @@ export default function CommunityPage() {
       <PageHero {...copy.hero} />
       <Section>
         <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
-          <MediaFrame src="/images/photo-community.jpg" label={copy.mediaLabel} className="min-h-[26rem]" />
+          <MediaFrame src="/drive-assets/curated/community-group.jpg" label={copy.mediaLabel} className="min-h-[26rem]" />
           <div className="grid gap-4">
             {copy.tracks.map((track, index) => (
               <FeatureCard key={track.title} {...track} delay={index * 0.06} />

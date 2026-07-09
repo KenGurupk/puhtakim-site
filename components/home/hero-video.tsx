@@ -1,18 +1,41 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type HeroVideoProps = {
   src: string;
+  introSrc?: string;
+  introAudioSrc?: string;
+  enableIntroAudio?: boolean;
+  posterSrc?: string;
 };
 
-export function HeroVideo({ src }: HeroVideoProps) {
+export function HeroVideo({
+  src,
+  introSrc = "/videos/intro-web.mp4",
+  introAudioSrc,
+  enableIntroAudio = false,
+  posterSrc = "/images/hero.jpg"
+}: HeroVideoProps) {
   const [videoReady, setVideoReady] = useState(false);
   const [introComplete, setIntroComplete] = useState(false);
+  const [introMounted, setIntroMounted] = useState(true);
   const [introUnavailable, setIntroUnavailable] = useState(false);
   const introRef = useRef<HTMLVideoElement>(null);
+  const introAudioRef = useRef<HTMLAudioElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const ready = videoReady && (introComplete || introUnavailable);
+  const introFinishedRef = useRef(false);
+  const introHidden = introComplete || introUnavailable;
+
+  const finishIntro = useCallback(() => {
+    if (introFinishedRef.current) {
+      return;
+    }
+
+    introFinishedRef.current = true;
+    setIntroComplete(true);
+    window.setTimeout(() => setIntroMounted(false), 920);
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -48,43 +71,78 @@ export function HeroVideo({ src }: HeroVideoProps) {
 
   useEffect(() => {
     const intro = introRef.current;
-    const introFallback = window.setTimeout(() => {
+    const audio = introAudioRef.current;
+
+    if (enableIntroAudio && audio) {
+      audio.volume = 0.22;
+      audio.play().catch(() => undefined);
+    }
+
+    const introLoadFallback = window.setTimeout(() => {
       if (!intro || (intro.readyState < 2 && intro.currentTime === 0)) {
         setIntroUnavailable(true);
+        setIntroMounted(false);
       }
     }, 1400);
 
-    return () => window.clearTimeout(introFallback);
-  }, []);
+    const introEndFallback = window.setTimeout(() => {
+      if (!introFinishedRef.current) {
+        finishIntro();
+      }
+    }, 6500);
+
+    return () => {
+      window.clearTimeout(introLoadFallback);
+      window.clearTimeout(introEndFallback);
+    };
+  }, [enableIntroAudio, finishIntro]);
 
   return (
     <>
+      {introMounted && (
+        <div
+          className={`pointer-events-none absolute inset-0 z-30 bg-black transition-opacity duration-1000 ease-out ${introHidden ? "opacity-0" : "opacity-100"}`}
+          aria-hidden="true"
+        >
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(193,18,31,0.22),transparent_30rem)]" />
+          <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-b from-transparent via-black/70 to-black" />
+          {!introUnavailable && (
+            <video
+              ref={introRef}
+              className="absolute inset-0 h-full w-full bg-black object-cover object-center"
+              autoPlay
+              muted
+              playsInline
+              preload="auto"
+              onEnded={finishIntro}
+              onError={() => {
+                setIntroUnavailable(true);
+                setIntroMounted(false);
+              }}
+              onAbort={() => {
+                setIntroUnavailable(true);
+                setIntroMounted(false);
+              }}
+            >
+              <source src={introSrc} type="video/mp4" />
+            </video>
+          )}
+          {introAudioSrc && (
+            <audio ref={introAudioRef} muted={!enableIntroAudio} preload="none" aria-hidden="true">
+              <source src={introAudioSrc} />
+            </audio>
+          )}
+        </div>
+      )}
       <div
-        className={`pointer-events-none absolute inset-0 z-30 bg-black transition-opacity duration-700 ${ready ? "opacity-0" : "opacity-100"}`}
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${posterSrc})` }}
         aria-hidden="true"
-      >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(193,18,31,0.22),transparent_30rem)]" />
-        <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-b from-transparent via-black/70 to-black" />
-        {!introUnavailable && (
-          <video
-            ref={introRef}
-            className="absolute inset-0 h-full w-full bg-black object-contain object-center"
-            autoPlay
-            muted
-            playsInline
-            preload="auto"
-            onEnded={() => setIntroComplete(true)}
-            onError={() => setIntroUnavailable(true)}
-            onAbort={() => setIntroUnavailable(true)}
-          >
-            <source src="/videos/intro-web.mp4" type="video/mp4" />
-          </video>
-        )}
-      </div>
+      />
       <video
         ref={videoRef}
-        className={`absolute inset-0 h-full w-full bg-black object-contain object-center transition-opacity duration-1000 ${
-          ready ? "opacity-100" : "opacity-0"
+        className={`hero-media-in absolute inset-0 h-full w-full bg-black object-cover object-center transition-opacity duration-1000 ease-out ${
+          videoReady ? "opacity-100" : "opacity-0"
         }`}
         autoPlay
         muted

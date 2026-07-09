@@ -12,9 +12,9 @@ const logoSrc = logoFile ? `/images/${logoFile}` : undefined;
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-black/82 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 overflow-hidden border-b border-white/10 bg-black/82 backdrop-blur-xl transition-[background-color,border-color,box-shadow] duration-500 ease-out">
       <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
-        <Link href="/" className="group flex items-center gap-3" aria-label="PushTakim home">
+        <Link href="/" className="group flex items-center gap-3 transition duration-300 ease-out hover:-translate-y-0.5" aria-label="PushTakim home">
           {logoSrc ? (
             <Image
               src={logoSrc}
@@ -22,8 +22,9 @@ export function Header() {
               width={360}
               height={109}
               priority
-              unoptimized
-              className="h-auto w-32 object-contain transition duration-300 group-hover:scale-[1.03] sm:w-36"
+              quality={72}
+              sizes="(min-width: 640px) 144px, 128px"
+              className="h-auto w-32 object-contain transition duration-500 ease-out group-hover:scale-[1.035] sm:w-36"
             />
           ) : (
             <>
