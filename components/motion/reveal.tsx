@@ -1,6 +1,5 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import type { PropsWithChildren } from "react";
 
@@ -12,15 +11,24 @@ type RevealProps = PropsWithChildren<{
 const DEBUG_MOTION = process.env.NODE_ENV === "development";
 
 export function Reveal({ children, className = "", delay = 0, variant = "section" }: RevealProps) {
-  const reducedMotion = useReducedMotion();
   const ref = useRef<HTMLDivElement | null>(null);
+  const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [heroReady, setHeroReady] = useState(false);
   const isHero = variant === "hero";
 
   useEffect(() => {
+    setMounted(true);
     if (DEBUG_MOTION) console.debug("[PushTakim motion] mounted", variant);
-    if (reducedMotion) return;
+  }, [variant]);
+
+  useEffect(() => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion) {
+      setVisible(true);
+      return;
+    }
+
     if (!isHero) return undefined;
 
     const handleHeroReady = () => setHeroReady(true);
@@ -31,17 +39,19 @@ export function Reveal({ children, className = "", delay = 0, variant = "section
       window.clearTimeout(fallback);
       window.removeEventListener("pushtakim:hero-ready", handleHeroReady);
     };
-  }, [isHero, reducedMotion, variant]);
+  }, [isHero, variant]);
 
   useEffect(() => {
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reducedMotion) return;
     if (!isHero || !heroReady) return;
     const timer = window.setTimeout(() => setVisible(true), delay * 1000);
     return () => window.clearTimeout(timer);
-  }, [delay, heroReady, isHero, reducedMotion]);
+  }, [delay, heroReady, isHero]);
 
   useEffect(() => {
     const node = ref.current;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!node || isHero || reducedMotion) return;
 
     const observer = new IntersectionObserver(
@@ -56,14 +66,14 @@ export function Reveal({ children, className = "", delay = 0, variant = "section
 
     observer.observe(node);
     return () => observer.disconnect();
-  }, [delay, isHero, reducedMotion, variant]);
+  }, [delay, isHero, variant]);
 
   return (
-    <motion.div
+    <div
       ref={ref}
-      className={`motion-reveal motion-reveal-${variant} ${visible || reducedMotion ? "is-visible" : ""} ${className}`}
+      className={`motion-reveal motion-reveal-${variant} ${mounted ? "motion-ready" : ""} ${visible ? "is-visible" : ""} ${className}`}
     >
       {children}
-    </motion.div>
+    </div>
   );
 }

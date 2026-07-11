@@ -80,6 +80,11 @@ select {
   animation: hero-media-in 1.2s var(--motion-ease) both;
 }
 
+.hero-background-drift {
+  transform-origin: center;
+  animation: hero-background-drift 720ms var(--motion-ease) both;
+}
+
 .scroll-cue {
   animation: scroll-cue 1.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
@@ -136,6 +141,59 @@ select {
   box-shadow: 0 26px 96px rgba(193, 18, 31, 0.15), 0 18px 70px rgba(0, 0, 0, 0.32);
 }
 
+.motion-reveal.motion-ready {
+  opacity: 0;
+  transform: translate3d(0, 1.35rem, 0);
+  transition:
+    opacity 640ms var(--motion-ease),
+    transform 640ms var(--motion-ease);
+  will-change: opacity, transform;
+}
+
+.motion-reveal.motion-ready.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.motion-reveal-card.motion-ready {
+  transform: translate3d(0, 1rem, 0) scale(0.985);
+}
+
+.motion-reveal-hero.motion-ready {
+  transform: translate3d(0, 1.75rem, 0);
+}
+
+.motion-reveal.motion-ready:not(.is-visible) .motion-card {
+  opacity: 0;
+  transform: translate3d(0, 1.15rem, 0) scale(0.985);
+}
+
+.motion-reveal.motion-ready.is-visible .motion-card {
+  opacity: 1;
+  transition:
+    opacity 560ms var(--motion-ease),
+    transform 560ms var(--motion-ease),
+    box-shadow var(--motion-smooth) var(--motion-ease),
+    border-color var(--motion-smooth) var(--motion-ease),
+    background-color var(--motion-smooth) var(--motion-ease);
+}
+
+.motion-reveal.motion-ready.is-visible .motion-card:nth-child(2) {
+  transition-delay: 80ms;
+}
+
+.motion-reveal.motion-ready.is-visible .motion-card:nth-child(3) {
+  transition-delay: 160ms;
+}
+
+.motion-reveal.motion-ready.is-visible .motion-card:nth-child(4) {
+  transition-delay: 240ms;
+}
+
+.motion-reveal.motion-ready.is-visible .motion-card:nth-child(5) {
+  transition-delay: 320ms;
+}
+
 .image-reveal {
   isolation: isolate;
 }
@@ -187,6 +245,18 @@ select {
   transform: scaleX(1);
 }
 
+.route-transition {
+  animation: route-transition-in 320ms var(--motion-ease) both;
+}
+
+.route-transition-exit {
+  opacity: 0.86;
+  transform: translate3d(0, 0.35rem, 0);
+  transition:
+    opacity 260ms var(--motion-ease),
+    transform 260ms var(--motion-ease);
+}
+
 .mobile-nav-scroll {
   scrollbar-width: none;
   scroll-snap-type: x proximity;
@@ -231,6 +301,30 @@ select {
   to {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+@keyframes hero-background-drift {
+  from {
+    opacity: 0.9;
+    transform: scale(1.03);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes route-transition-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.75rem, 0);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -325,6 +419,15 @@ select {
 
   .cursor-airflow {
     display: none;
+  }
+
+  .motion-reveal.motion-ready,
+  .motion-reveal.motion-ready:not(.is-visible) .motion-card,
+  .route-transition,
+  .route-transition-exit,
+  .hero-background-drift {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
 

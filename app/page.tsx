@@ -39,31 +39,31 @@ export default function HomePage() {
             <div className="absolute inset-y-0 -left-4 -right-8 -z-10 rounded-[2rem] bg-black/68 blur-2xl sm:-left-10 sm:-right-14" aria-hidden="true" />
             <div className="absolute inset-y-8 -left-2 -right-6 -z-10 rounded-[1.75rem] bg-gradient-to-l from-black/78 via-black/48 to-transparent sm:-left-8 sm:-right-12" aria-hidden="true" />
             <div className="absolute -right-10 top-0 -z-10 h-72 w-80 rounded-full bg-blood/24 blur-[95px]" aria-hidden="true" />
-            <Reveal delay={0.08}>
+            <Reveal delay={0.1} variant="hero">
               <p className="text-sm font-black uppercase tracking-[0.36em] text-white/70 sm:text-base" dir="ltr">
                 PushTakim
               </p>
             </Reveal>
-            <Reveal delay={0.18}>
+            <Reveal delay={0.18} variant="hero">
               <h1 className="mt-8 text-5xl font-black leading-[1.03] tracking-tight text-white sm:text-7xl lg:text-8xl">
                 {siteCopy.home.hero.headline}
               </h1>
             </Reveal>
-            <Reveal delay={0.3}>
+            <Reveal delay={0.3} variant="hero">
               <p className="mt-8 max-w-3xl text-3xl font-black leading-tight text-white sm:text-5xl">
                 {siteCopy.home.hero.secondaryTop}
                 <br />
                 {siteCopy.home.hero.secondaryBottom}
               </p>
             </Reveal>
-            <Reveal delay={0.42}>
+            <Reveal delay={0.42} variant="hero">
               <p className="mt-8 text-2xl font-black text-white/88 sm:text-3xl">
                 {siteCopy.home.hero.finalLine}
               </p>
             </Reveal>
 
             <div className="mt-12 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
-              <Reveal delay={0.54} className="w-full sm:w-auto">
+              <Reveal delay={0.54} variant="hero" className="w-full sm:w-auto">
                 <Link
                   href="/community"
                 className="motion-button inline-flex min-h-14 w-full items-center justify-center rounded-2xl bg-blood px-6 py-4 text-center text-base font-black text-white shadow-[0_20px_80px_rgba(193,18,31,0.32)] transition duration-300 hover:-translate-y-1 hover:bg-white hover:text-black hover:shadow-[0_24px_90px_rgba(193,18,31,0.34)] active:scale-[0.98] sm:w-auto"
@@ -71,7 +71,7 @@ export default function HomePage() {
                   {siteCopy.home.hero.primaryCta}
                 </Link>
               </Reveal>
-              <Reveal delay={0.62} className="w-full sm:w-auto">
+              <Reveal delay={0.62} variant="hero" className="w-full sm:w-auto">
                 <Link
                   href="/events"
                   className="motion-button inline-flex min-h-14 w-full items-center justify-center rounded-2xl border border-white/35 bg-black/24 px-6 py-4 text-center text-base font-black text-white backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:border-white hover:bg-white hover:text-black hover:shadow-[0_24px_90px_rgba(255,255,255,0.12)] active:scale-[0.98] sm:w-auto"
