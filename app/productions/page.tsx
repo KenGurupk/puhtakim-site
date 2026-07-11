@@ -8,6 +8,7 @@ import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
 import { siteCopy } from "@/content/site-copy";
 import { productionServices } from "@/data/content";
+import { pageMedia, productionGalleryMedia } from "@/lib/section-media-manifest";
 
 const copy = siteCopy.pages.productions;
 
@@ -37,23 +38,22 @@ export default function ProductionsPage() {
               {copy.cta}
             </Link>
           </div>
-          <MediaFrame src="/drive-assets/curated/production-commercial.jpg" label={copy.mediaLabel} className="min-h-[28rem]" />
+          <MediaFrame src={pageMedia.productions.src} alt={pageMedia.productions.alt} fit={pageMedia.productions.fit} label={copy.mediaLabel} className="min-h-[28rem]" />
         </div>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-[0.85fr_1.15fr]">
-          {[
-            "/drive-assets/productions/production-urban.jpg",
-            "/drive-assets/productions/production-air.jpg",
-            "/drive-assets/productions/production-dome.jpg",
-            "/drive-assets/productions/production-color.jpg"
-          ].map((src, index) => (
-            <div key={src} className={`relative overflow-hidden rounded-2xl border border-white/10 bg-[#090909] shadow-[0_18px_70px_rgba(0,0,0,0.28)] transition duration-500 hover:-translate-y-1 hover:border-blood/50 ${index === 1 ? "min-h-[30rem] sm:row-span-2" : "min-h-[22rem]"}`}>
+        <div className="mt-6 grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-[0.9fr_1.1fr]">
+          {productionGalleryMedia.map((item) => (
+            <div
+              key={item.src}
+              className="motion-card relative overflow-hidden rounded-2xl border border-white/10 bg-[#090909] shadow-[0_18px_70px_rgba(0,0,0,0.28)] transition duration-500 hover:-translate-y-1 hover:border-blood/50"
+              style={{ aspectRatio: item.aspectRatio, background: item.background }}
+            >
               <Image
-                src={src}
-                alt={copy.hero.title}
+                src={item.src}
+                alt={item.alt}
                 fill
                 sizes="(min-width: 768px) 50vw, 100vw"
                 quality={70}
-                className="object-contain p-2 transition duration-700 hover:scale-[1.03]"
+                className="object-contain"
               />
               <div className="absolute inset-0 bg-black/12" />
             </div>

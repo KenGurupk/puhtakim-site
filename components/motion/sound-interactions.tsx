@@ -2,175 +2,183 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-type AudioKit = {
-  context: AudioContext;
-  ambient: {
-    gain: GainNode;
-    oscillators: OscillatorNode[];
-  };
-};
-
 const STORAGE_KEY = "pushtakim-sound-enabled";
-
-function createAudioKit() {
-  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-  const context = new AudioContextClass();
-  const ambientGain = context.createGain();
-  ambientGain.gain.value = 0.018;
-  ambientGain.connect(context.destination);
-
-  const oscillators = [74, 111].map((frequency, index) => {
-    const oscillator = context.createOscillator();
-    const filter = context.createBiquadFilter();
-
-    oscillator.type = index === 0 ? "sine" : "triangle";
-    oscillator.frequency.value = frequency;
-    filter.type = "lowpass";
-    filter.frequency.value = 260;
-
-    oscillator.connect(filter);
-    filter.connect(ambientGain);
-    oscillator.start();
-
-    return oscillator;
-  });
-
-  return {
-    context,
-    ambient: {
-      gain: ambientGain,
-      oscillators
-    }
-  };
-}
-
-function playTone(context: AudioContext, frequency: number, duration: number, volume: number) {
-  const oscillator = context.createOscillator();
-  const gain = context.createGain();
-  const now = context.currentTime;
-
-  oscillator.type = "sine";
-  oscillator.frequency.setValueAtTime(frequency, now);
-  oscillator.frequency.exponentialRampToValueAtTime(frequency * 0.72, now + duration);
-
-  gain.gain.setValueAtTime(0.0001, now);
-  gain.gain.exponentialRampToValueAtTime(volume, now + 0.012);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-
-  oscillator.connect(gain);
-  gain.connect(context.destination);
-  oscillator.start(now);
-  oscillator.stop(now + duration + 0.02);
-}
-
-declare global {
-  interface Window {
-    webkitAudioContext?: typeof AudioContext;
-  }
-}
+const SOUND_EVENT = "pushtakim:sound-change";
+const SOUND_FILES = {
+  click: "/sounds/click.wav",
+  whoosh: "/sounds/whoosh.wav"
+};
+const DEBUG_SOUND = process.env.NODE_ENV === "development";
+const SOUND_COOLDOWN_MS = 150;
 
 export function SoundInteractions() {
-  const audioKit = useRef<AudioKit | null>(null);
-  const lastHover = useRef(0);
   const [enabled, setEnabled] = useState(false);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const audioRefs = useRef<Partial<Record<keyof typeof SOUND_FILES, HTMLAudioElement>>>({});
+  const lastSoundAtRef = useRef(0);
 
-  const ensureAudio = useCallback(async () => {
-    if (!audioKit.current) {
-      audioKit.current = createAudioKit();
+  const getAudioContext = useCallback(() => {
+    if (typeof window === "undefined") return null;
+
+    if (!audioContextRef.current) {
+      const AudioContextClass = window.AudioContext || (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (!AudioContextClass) return null;
+      audioContextRef.current = new AudioContextClass();
     }
 
-    if (audioKit.current.context.state === "suspended") {
-      await audioKit.current.context.resume();
+    if (audioContextRef.current.state === "suspended") {
+      audioContextRef.current.resume().catch(() => undefined);
     }
 
-    return audioKit.current.context;
+    return audioContextRef.current;
   }, []);
 
-  const playCue = useCallback(
-    async (type: "hover" | "click") => {
+  const playTone = useCallback((type: "click" | "whoosh", force = false) => {
+    if (!force && !enabled) return;
+
+    const context = getAudioContext();
+    if (!context) return;
+
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+    const now = context.currentTime;
+    const settings = {
+      click: { frequency: 220, endFrequency: 120, volume: 0.035, duration: 0.06 },
+      whoosh: { frequency: 90, endFrequency: 170, volume: 0.026, duration: 0.16 }
+    }[type];
+
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(settings.frequency, now);
+    oscillator.frequency.exponentialRampToValueAtTime(settings.endFrequency, now + settings.duration);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(settings.volume, now + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + settings.duration);
+    oscillator.connect(gain);
+    gain.connect(context.destination);
+    oscillator.start(now);
+    oscillator.stop(now + settings.duration + 0.02);
+  }, [enabled, getAudioContext]);
+
+  const playSound = useCallback((type: "click" | "whoosh", force = false) => {
+    if (!force && !enabled) return;
+
+    const now = Date.now();
+    if (!force && now - lastSoundAtRef.current < SOUND_COOLDOWN_MS) return;
+    lastSoundAtRef.current = now;
+
+    playTone(type, force);
+
+    const audio = audioRefs.current[type];
+    if (!audio) {
+      if (DEBUG_SOUND) console.debug("[PushTakim sound] missing audio element", type);
+      return;
+    }
+
+    if (DEBUG_SOUND) console.debug("[PushTakim sound] play attempt", type);
+    if (!audio.paused && !audio.ended) return;
+    audio.currentTime = 0;
+    audio.play().catch((error) => {
+      if (DEBUG_SOUND) console.debug("[PushTakim sound] file play failed, tone already fired", type, error);
+    });
+  }, [enabled, playTone]);
+
+  useEffect(() => {
+    setEnabled(false);
+    window.localStorage.setItem(STORAGE_KEY, "false");
+    audioRefs.current = {
+      click: new Audio(SOUND_FILES.click),
+      whoosh: new Audio(SOUND_FILES.whoosh)
+    };
+    Object.values(audioRefs.current).forEach((audio) => {
+      audio.preload = "auto";
+      audio.volume = 0.38;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (DEBUG_SOUND) console.debug("[PushTakim sound] state", enabled ? "enabled" : "muted");
+  }, [enabled]);
+
+  useEffect(() => {
+    const handlePointerDown = (event: PointerEvent) => {
       if (!enabled) return;
-
-      try {
-        const context = await ensureAudio();
-        playTone(context, type === "click" ? 220 : 330, type === "click" ? 0.075 : 0.045, type === "click" ? 0.028 : 0.014);
-      } catch {
+      const target = event.target as Element | null;
+      if (target?.closest("[data-sound-toggle]")) return;
+      const button = target?.closest(".motion-button, button, a");
+      const card = target?.closest(".motion-card");
+      if (button) {
+        playSound("click");
         return;
       }
-    },
-    [enabled, ensureAudio]
-  );
-
-  const toggleSound = async () => {
-    const nextEnabled = !enabled;
-    setEnabled(nextEnabled);
-    window.localStorage.setItem(STORAGE_KEY, String(nextEnabled));
-
-    if (nextEnabled) {
-      try {
-        const context = await ensureAudio();
-        playTone(context, 196, 0.12, 0.032);
-      } catch {
-        return;
+      if (card) {
+        playSound("click");
       }
-    } else if (audioKit.current) {
-      audioKit.current.context.suspend().catch(() => undefined);
+    };
+
+    window.addEventListener("pointerdown", handlePointerDown, { passive: true });
+
+    return () => {
+      window.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, [enabled, playSound]);
+
+  const toggleSound = () => {
+    const next = !enabled;
+    if (DEBUG_SOUND) console.debug("[PushTakim sound] toggle click", next ? "enable" : "mute");
+
+    try {
+      window.localStorage.setItem(STORAGE_KEY, String(next));
+    } catch {
+      // Sound is optional; blocked storage should not break the UI.
+    }
+
+    setEnabled(next);
+    window.dispatchEvent(new CustomEvent(SOUND_EVENT, { detail: { enabled: next } }));
+
+    if (next) {
+      window.setTimeout(() => playSound("click", true), 0);
     }
   };
-
-  useEffect(() => {
-    setEnabled(window.localStorage.getItem(STORAGE_KEY) === "true");
-  }, []);
-
-  useEffect(() => {
-    if (!enabled) return;
-
-    ensureAudio().catch(() => undefined);
-  }, [enabled, ensureAudio]);
-
-  useEffect(() => {
-    const handlePointerOver = (event: PointerEvent) => {
-      const target = event.target;
-      if (!(target instanceof Element)) return;
-      if (!target.closest(".motion-button, .motion-link")) return;
-
-      const now = performance.now();
-      if (now - lastHover.current < 180) return;
-      lastHover.current = now;
-      playCue("hover");
-    };
-
-    const handleClick = (event: MouseEvent) => {
-      const target = event.target;
-      if (!(target instanceof Element)) return;
-      if (target.closest(".motion-button, button, a")) playCue("click");
-    };
-
-    document.addEventListener("pointerover", handlePointerOver, { passive: true });
-    document.addEventListener("click", handleClick, { passive: true });
-
-    return () => {
-      document.removeEventListener("pointerover", handlePointerOver);
-      document.removeEventListener("click", handleClick);
-    };
-  }, [playCue]);
-
-  useEffect(() => {
-    return () => {
-      audioKit.current?.ambient.oscillators.forEach((oscillator) => oscillator.stop());
-      audioKit.current?.context.close().catch(() => undefined);
-    };
-  }, []);
 
   return (
     <button
       type="button"
       onClick={toggleSound}
-      className="motion-button fixed bottom-4 left-4 z-50 inline-flex size-11 items-center justify-center rounded-full border border-white/15 bg-black/78 text-lg text-white shadow-[0_16px_50px_rgba(0,0,0,0.42)] backdrop-blur-xl transition duration-300 hover:border-blood/70 hover:bg-blood/18 focus:outline-none focus:ring-2 focus:ring-blood/70 focus:ring-offset-2 focus:ring-offset-black"
-      aria-label={enabled ? "כיבוי סאונד" : "הפעלת סאונד"}
+      className={`motion-button fixed bottom-4 right-4 z-50 inline-flex h-12 min-w-12 items-center justify-center rounded-full border text-white shadow-[0_16px_50px_rgba(0,0,0,0.42)] backdrop-blur-xl transition duration-300 hover:border-blood/70 hover:bg-blood/18 focus:outline-none focus:ring-2 focus:ring-blood/70 focus:ring-offset-2 focus:ring-offset-black ${
+        enabled ? "border-blood/70 bg-blood/20 ring-1 ring-blood/55" : "border-white/15 bg-black/82"
+      }`}
+      aria-label={enabled ? "Sound on" : "Sound off"}
       aria-pressed={enabled}
-      title={enabled ? "כיבוי סאונד" : "הפעלת סאונד"}
+      title={enabled ? "Sound on" : "Sound off"}
+      data-audio-ready="true"
+      data-audio-enabled={enabled}
+      data-sound-toggle="true"
+      data-sound-click={SOUND_FILES.click}
+      data-sound-whoosh={SOUND_FILES.whoosh}
     >
-      <span aria-hidden="true">{enabled ? "🔊" : "🔇"}</span>
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 24 24"
+        className="size-5"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      >
+        <path d="M4 9v6h4l5 4V5L8 9H4Z" />
+        {enabled ? (
+          <>
+            <path d="M16 8.5a5 5 0 0 1 0 7" />
+            <path d="M19 6a9 9 0 0 1 0 12" />
+          </>
+        ) : (
+          <>
+            <path d="M17 9l4 4" />
+            <path d="M21 9l-4 4" />
+          </>
+        )}
+      </svg>
     </button>
   );
 }

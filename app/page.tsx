@@ -18,7 +18,9 @@ const sectionImages: Record<string, string> = {
   "/workshops": "/drive-assets/curated/workshops-session.jpg",
   "/shows": "/drive-assets/curated/shows-stage.jpg",
   "/productions": "/drive-assets/curated/production-commercial.jpg",
-  "/store": "/drive-assets/curated/store-lifestyle.jpg"
+  "/store": "/drive-assets/curated/store-lifestyle.jpg",
+  "#guides": "/drive-assets/guides/IMG_2700.JPG",
+  "#contact": "/drive-assets/contact/contact-action.jpg"
 };
 
 export default function HomePage() {
@@ -313,6 +315,7 @@ export default function HomePage() {
           fill
           sizes="100vw"
           className="-z-20 object-cover"
+                  style={{ objectPosition: "50% 45%" }}
         />
         <div className="absolute inset-0 -z-10 bg-black/72" />
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_42%,rgba(193,18,31,0.22),transparent_34rem)]" />

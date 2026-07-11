@@ -7,6 +7,7 @@ import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
 import { siteCopy } from "@/content/site-copy";
 import { workshops } from "@/data/content";
+import { pageMedia } from "@/lib/section-media-manifest";
 
 const copy = siteCopy.pages.workshops;
 
@@ -34,7 +35,7 @@ export default function WorkshopsPage() {
       </Section>
       <Section>
         <div className="grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-center">
-          <MediaFrame src="/drive-assets/curated/workshops-session.jpg" label={copy.mediaLabel} className="min-h-[24rem]" />
+          <MediaFrame src={pageMedia.workshops.src} alt={pageMedia.workshops.alt} fit={pageMedia.workshops.fit} label={copy.mediaLabel} className="min-h-[24rem]" />
           <div>
             <h2 className="text-4xl font-black text-white sm:text-5xl">{copy.inviteTitle}</h2>
             <p className="mt-5 text-base leading-8 text-zinc-300">

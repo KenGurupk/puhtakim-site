@@ -21,11 +21,20 @@ export function HeroVideo({
   const [introComplete, setIntroComplete] = useState(false);
   const [introMounted, setIntroMounted] = useState(true);
   const [introUnavailable, setIntroUnavailable] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(false);
+  const [heroMotionReady, setHeroMotionReady] = useState(false);
   const introRef = useRef<HTMLVideoElement>(null);
   const introAudioRef = useRef<HTMLAudioElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const introFinishedRef = useRef(false);
   const introHidden = introComplete || introUnavailable;
+
+  const announceHeroReady = useCallback(() => {
+    setHeroMotionReady(true);
+    window.setTimeout(() => {
+      window.dispatchEvent(new CustomEvent("pushtakim:hero-ready"));
+    }, 250);
+  }, []);
 
   const finishIntro = useCallback(() => {
     if (introFinishedRef.current) {
@@ -34,7 +43,20 @@ export function HeroVideo({
 
     introFinishedRef.current = true;
     setIntroComplete(true);
+    announceHeroReady();
     window.setTimeout(() => setIntroMounted(false), 920);
+  }, [announceHeroReady]);
+
+  useEffect(() => {
+    setSoundEnabled(window.localStorage.getItem("pushtakim-sound-enabled") === "true");
+
+    const handleSoundChange = (event: Event) => {
+      const customEvent = event as CustomEvent<{ enabled?: boolean }>;
+      setSoundEnabled(Boolean(customEvent.detail?.enabled));
+    };
+
+    window.addEventListener("pushtakim:sound-change", handleSoundChange);
+    return () => window.removeEventListener("pushtakim:sound-change", handleSoundChange);
   }, []);
 
   useEffect(() => {
@@ -73,7 +95,7 @@ export function HeroVideo({
     const intro = introRef.current;
     const audio = introAudioRef.current;
 
-    if (enableIntroAudio && audio) {
+    if (enableIntroAudio && soundEnabled && audio) {
       audio.volume = 0.22;
       audio.play().catch(() => undefined);
     }
@@ -82,6 +104,7 @@ export function HeroVideo({
       if (!intro || (intro.readyState < 2 && intro.currentTime === 0)) {
         setIntroUnavailable(true);
         setIntroMounted(false);
+        announceHeroReady();
       }
     }, 1400);
 
@@ -91,11 +114,18 @@ export function HeroVideo({
       }
     }, 6500);
 
+    const heroMotionFallback = window.setTimeout(() => {
+      if (!heroMotionReady) {
+        announceHeroReady();
+      }
+    }, 4200);
+
     return () => {
       window.clearTimeout(introLoadFallback);
       window.clearTimeout(introEndFallback);
+      window.clearTimeout(heroMotionFallback);
     };
-  }, [enableIntroAudio, finishIntro]);
+  }, [announceHeroReady, enableIntroAudio, finishIntro, heroMotionReady, soundEnabled]);
 
   return (
     <>
@@ -111,17 +141,19 @@ export function HeroVideo({
               ref={introRef}
               className="absolute inset-0 h-full w-full bg-black object-cover object-center"
               autoPlay
-              muted
+              muted={!soundEnabled}
               playsInline
               preload="auto"
               onEnded={finishIntro}
               onError={() => {
                 setIntroUnavailable(true);
                 setIntroMounted(false);
+                announceHeroReady();
               }}
               onAbort={() => {
                 setIntroUnavailable(true);
                 setIntroMounted(false);
+                announceHeroReady();
               }}
             >
               <source src={introSrc} type="video/mp4" />
@@ -141,7 +173,7 @@ export function HeroVideo({
       />
       <video
         ref={videoRef}
-        className={`hero-media-in absolute inset-0 h-full w-full bg-black object-cover object-center transition-opacity duration-1000 ease-out ${
+        className={`${introHidden || heroMotionReady ? "hero-background-drift" : ""} absolute inset-0 h-full w-full bg-black object-cover object-center transition-opacity duration-1000 ease-out ${
           videoReady ? "opacity-100" : "opacity-0"
         }`}
         autoPlay

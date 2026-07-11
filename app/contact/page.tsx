@@ -5,6 +5,7 @@ import { MediaFrame } from "@/components/ui/media-frame";
 import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
 import { siteCopy } from "@/content/site-copy";
+import { pageMedia } from "@/lib/section-media-manifest";
 
 const copy = siteCopy.pages.contact;
 
@@ -25,9 +26,12 @@ export default function ContactPage() {
               </p>
             </div>
             <MediaFrame
-              src="/drive-assets/contact/contact-action.jpg"
+              src={pageMedia.contact.src}
+              alt={pageMedia.contact.alt}
+              fit={pageMedia.contact.fit}
               label="רגע קטן מהשטח, לפני שמתחילים לדבר על הפרויקט הבא"
               className="min-h-[20rem] lg:aspect-[4/3]"
+              position="center top"
             />
           </div>
           <ContactForm />

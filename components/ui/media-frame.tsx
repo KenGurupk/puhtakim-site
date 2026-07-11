@@ -1,5 +1,7 @@
 import Image from "next/image";
 
+import { getMediaFocalPoint } from "@/lib/media-focal-points";
+
 type MediaFrameProps = {
   label: string;
   className?: string;
@@ -10,16 +12,19 @@ type MediaFrameProps = {
   position?: string;
 };
 
-export function MediaFrame({ label, className = "", src, alt = label, poster, fit = "cover", position = "center" }: MediaFrameProps) {
+export function MediaFrame({ label, className = "", src, alt = label, poster, fit = "cover", position = "center center" }: MediaFrameProps) {
   const isVideo = src?.match(/\.(mp4|webm|mov)$/i);
-  const mediaFit = fit === "contain" ? "object-contain" : "object-cover";
+  const focalPoint = getMediaFocalPoint(src, position);
+  const resolvedFit = fit === "contain" ? "contain" : focalPoint.fit;
+  const mediaFit = resolvedFit === "contain" ? "object-contain" : "object-cover";
+  const hoverScale = resolvedFit === "contain" ? "" : "group-hover:scale-[1.03]";
 
   return (
     <div className={`motion-card image-reveal group relative box-border aspect-[4/5] min-h-72 w-full max-w-full overflow-hidden rounded-2xl border border-white/10 bg-[#090909] shadow-[0_18px_70px_rgba(0,0,0,0.32)] transition duration-500 hover:-translate-y-1 hover:border-blood/60 hover:shadow-[0_24px_90px_rgba(193,18,31,0.14)] lg:aspect-[16/11] ${className}`}>
       {src && isVideo ? (
         <video
-          className={`absolute inset-0 h-full w-full ${mediaFit} transition duration-700 group-hover:scale-[1.03]`}
-          style={{ objectPosition: position }}
+          className={`absolute inset-0 h-full w-full ${mediaFit} transition duration-700 ${hoverScale}`}
+          style={{ objectPosition: focalPoint.objectPosition }}
           autoPlay
           muted
           loop
@@ -38,8 +43,8 @@ export function MediaFrame({ label, className = "", src, alt = label, poster, fi
           sizes="(min-width: 1280px) 640px, (min-width: 1024px) 50vw, 100vw"
           quality={70}
           loading="lazy"
-          className={`${mediaFit} transition duration-700 group-hover:scale-[1.03]`}
-          style={{ objectPosition: position }}
+          className={`${mediaFit} transition duration-700 ${hoverScale}`}
+          style={{ objectPosition: focalPoint.objectPosition }}
         />
       ) : (
         <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(193,18,31,0.22),transparent_42%),radial-gradient(circle_at_60%_35%,rgba(255,255,255,0.14),transparent_11rem)]" />

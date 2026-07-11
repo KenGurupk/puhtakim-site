@@ -14,7 +14,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 overflow-hidden border-b border-white/10 bg-black/82 backdrop-blur-xl transition-[background-color,border-color,box-shadow] duration-500 ease-out">
       <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
-        <Link href="/" className="group flex items-center gap-3 transition duration-300 ease-out hover:-translate-y-0.5" aria-label="PushTakim home">
+        <Link href="/" className="logo-entrance group flex items-center gap-3 transition duration-300 ease-out hover:-translate-y-0.5" aria-label="PushTakim home">
           {logoSrc ? (
             <Image
               src={logoSrc}

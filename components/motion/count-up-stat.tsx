@@ -19,6 +19,13 @@ export function CountUpStat({ label, value, suffix = "", textValue, delay = 0 }:
     const node = ref.current;
     if (!node || value == null || hasStarted) return;
 
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion) {
+      setDisplayValue(value);
+      setHasStarted(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;

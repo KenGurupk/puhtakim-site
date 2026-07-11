@@ -6,6 +6,7 @@ import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
 import { YouTubeGuideCard } from "@/components/ui/youtube-guide-card";
 import { siteCopy } from "@/content/site-copy";
+import { pageMedia } from "@/lib/section-media-manifest";
 
 const copy = siteCopy.pages.guides;
 
@@ -23,9 +24,12 @@ export default function GuidesPage() {
               <p>{copy.intro}</p>
               <p>{copy.text}</p>
               <MediaFrame
-                src="/drive-assets/guides/guides-action.jpg"
+                src={pageMedia.guides.src}
+                alt={pageMedia.guides.alt}
+                fit={pageMedia.guides.fit}
                 label="רגע של תנועה שאפשר להתחיל ללמוד ממנו"
                 className="mt-8 min-h-[18rem] lg:aspect-[16/10]"
+                position="center top"
               />
             </div>
           </Reveal>

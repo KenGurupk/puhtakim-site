@@ -9,6 +9,7 @@ import { PageHero } from "@/components/ui/page-hero";
 import { Section } from "@/components/ui/section";
 import { siteCopy } from "@/content/site-copy";
 import { shows } from "@/data/content";
+import { pageMedia, showsGalleryMedia } from "@/lib/section-media-manifest";
 
 const copy = siteCopy.pages.shows;
 
@@ -21,9 +22,10 @@ export default function ShowsPage() {
       <Section>
         <div className="grid min-w-0 gap-5 lg:grid-cols-[1fr_1fr] lg:items-start">
           <MediaFrame
-            src="/drive-assets/shows/shows-action.jpg"
+            src={pageMedia.shows.src}
+            alt={pageMedia.shows.alt}
             label={copy.mediaLabel}
-            fit="contain"
+            fit={pageMedia.shows.fit}
             position="center top"
             className="min-h-[24rem] sm:min-h-[28rem] lg:min-h-[30rem]"
           />
@@ -33,22 +35,20 @@ export default function ShowsPage() {
             ))}
           </div>
         </div>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { src: "/drive-assets/shows/shows-crowd.jpg", className: "lg:col-span-2" },
-            { src: "/drive-assets/shows/shows-rooftop-air.jpg", className: "" },
-            { src: "/drive-assets/shows/shows-urban-motion.jpg", className: "" },
-            { src: "/drive-assets/curated/events-night.jpg", className: "lg:col-span-2" }
-          ].map((item, index) => (
-            <Reveal key={item.src} delay={index * 0.06} className={item.className}>
-              <div className="motion-card image-reveal relative min-h-[18rem] overflow-hidden rounded-2xl border border-white/10 bg-[#090909] shadow-[0_18px_70px_rgba(0,0,0,0.28)] transition duration-500 hover:-translate-y-1 hover:border-blood/50">
+        <div className="mt-6 grid items-start gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {showsGalleryMedia.map((item, index) => (
+            <Reveal key={item.src} delay={index * 0.06}>
+              <div
+                className="motion-card relative overflow-hidden rounded-2xl border border-white/10 bg-[#090909] shadow-[0_18px_70px_rgba(0,0,0,0.28)] transition duration-500 hover:-translate-y-1 hover:border-blood/50"
+                style={{ aspectRatio: item.aspectRatio, background: item.background }}
+              >
                 <Image
                   src={item.src}
-                  alt={copy.hero.title}
+                  alt={item.alt}
                   fill
-                  sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 100vw"
+                  sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                   quality={70}
-                  className="object-cover transition duration-700 hover:scale-[1.04]"
+                  className="object-contain"
                 />
                 <div className="absolute inset-0 bg-black/25" />
               </div>
