@@ -5,7 +5,18 @@ import { siteCopy } from "@/content/site-copy";
 
 const pricing = siteCopy.home.pricing;
 
-export function PushTourPricing() {
+type PushTourPricingProps = {
+  title?: string;
+  subtitle?: string;
+  question?: string | null;
+  valueLine?: string;
+  showFaq?: boolean;
+};
+
+export function PushTourPricing({ title, subtitle, question, valueLine, showFaq = true }: PushTourPricingProps = {}) {
+  const questionText = question === undefined ? pricing.question : question;
+  const availablePlans = pricing.plans.filter((plan) => plan.id === "beer-sheva-special" || plan.id === "calima-single");
+
   return (
     <section id="tickets" className="relative isolate overflow-hidden border-b border-white/10 bg-black px-5 py-24 sm:px-8 sm:py-32 lg:py-40">
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_76%_10%,rgba(193,18,31,0.22),transparent_28rem),radial-gradient(circle_at_20%_74%,rgba(245,158,11,0.12),transparent_24rem),linear-gradient(180deg,#050505_0%,#0b0b0b_50%,#050505_100%)]" />
@@ -13,31 +24,43 @@ export function PushTourPricing() {
         <Reveal>
           <div className="max-w-4xl">
             <p className="text-sm font-black uppercase tracking-[0.28em] text-blood">
-              כרטיסים לטור
+              PUSH TOUR 2026
             </p>
-            <h2 className="mt-6 text-4xl font-black leading-tight text-white sm:text-6xl lg:text-7xl">
-              {pricing.title}
+            <h2 className="mt-6 whitespace-pre-line text-4xl font-black leading-tight text-white sm:text-6xl lg:text-7xl">
+              {title ?? pricing.title}
             </h2>
             <p className="mt-7 max-w-3xl text-lg font-medium leading-8 text-zinc-300 sm:text-xl">
-              {pricing.subtitle}
+              {subtitle ?? pricing.subtitle}
             </p>
+            {valueLine && (
+              <p className="mt-5 max-w-3xl rounded-2xl border border-blood/35 bg-blood/10 px-5 py-4 text-base font-black leading-7 text-white shadow-[0_20px_80px_rgba(193,18,31,0.12)]">
+                {valueLine}
+              </p>
+            )}
           </div>
         </Reveal>
 
-        <Reveal delay={0.08}>
-          <p className="mt-16 text-center text-3xl font-black tracking-tight text-white sm:text-5xl">
-            {pricing.question}
-          </p>
-        </Reveal>
+        {questionText && (
+          <Reveal delay={0.08}>
+            <p className="mt-16 text-center text-3xl font-black tracking-tight text-white sm:text-5xl">
+              {questionText}
+            </p>
+          </Reveal>
+        )}
 
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 xl:grid-cols-4 xl:items-center">
-          {pricing.plans.map((plan, index) => {
-            const role = plan.id === "ultimate" ? "חוויה מלאה" : plan.id === "three-halls" ? "הבחירה המשתלמת" : plan.id === "mabuza-early-bird" ? "הצעת פתיחה" : "כניסה ראשונה";
-            const availability = "availabilityKey" in plan && plan.availabilityKey === "earlyBirdMabuza" ? pricing.availability.earlyBirdMabuza : undefined;
+        <div id="available-ticket-options" className="bundle-choice-grid mt-12 grid gap-5 md:grid-cols-2 md:items-stretch">
+          {availablePlans.map((plan, index) => {
+            const role = plan.id === "beer-sheva-special" ? "התחנה הבאה" : "אירוע הסיום";
+            const availability = undefined;
 
             return (
-              <Reveal key={plan.id} delay={index * 0.07} className="h-full">
-                <TicketPlanCard plan={plan} role={role} health={pricing.health} availability={availability} />
+              <Reveal key={plan.id} delay={index * 0.09} className="h-full">
+                <TicketPlanCard
+                  plan={plan}
+                  role={role}
+                  availability={availability}
+                  emphasis={plan.id === "beer-sheva-special" ? "bundle" : "standard"}
+                />
               </Reveal>
             );
           })}
@@ -66,7 +89,7 @@ export function PushTourPricing() {
                       </td>
                       {row.values.map((value, index) => (
                         <td
-                          key={`${row.label}-${value}`}
+                          key={`${row.label}-${index}`}
                           className={`px-6 py-5 text-sm font-bold ${
                             index === 2 ? "text-amber-200" : "text-white/82"
                           }`}
@@ -82,9 +105,11 @@ export function PushTourPricing() {
           </div>
         </Reveal>
 
-        <Reveal delay={0.14}>
-          <PricingFaq title={pricing.faq.title} items={pricing.faq.items} />
-        </Reveal>
+        {showFaq && (
+          <Reveal delay={0.14}>
+            <PricingFaq title={pricing.faq.title} items={pricing.faq.items} />
+          </Reveal>
+        )}
       </div>
     </section>
   );

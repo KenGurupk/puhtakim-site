@@ -31,6 +31,20 @@ body {
   overscroll-behavior-y: none;
 }
 
+body::before {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  content: "";
+  pointer-events: none;
+  opacity: 0.055;
+  background-image:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.055) 0 1px, transparent 1px 12px),
+    radial-gradient(circle at 18% 22%, rgba(193, 18, 31, 0.08), transparent 18rem),
+    radial-gradient(circle at 82% 76%, rgba(255, 255, 255, 0.035), transparent 16rem);
+  background-size: 18px 18px, 100% 100%, 100% 100%;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -85,6 +99,15 @@ select {
   animation: hero-background-drift 720ms var(--motion-ease) both;
 }
 
+.intro-sticker-loader {
+  isolation: isolate;
+}
+
+.intro-sticker-mark {
+  transform-origin: 50% 54%;
+  animation: sticker-stamp 860ms var(--motion-ease) both;
+}
+
 .scroll-cue {
   animation: scroll-cue 1.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
@@ -114,13 +137,13 @@ select {
 .motion-button {
   transform: translateZ(0);
   will-change: transform, box-shadow, background-color, color, border-color;
-  transition-duration: var(--motion-smooth);
+  transition-duration: 210ms;
   transition-timing-function: var(--motion-ease);
 }
 
 .motion-button:hover {
-  box-shadow: 0 18px 70px rgba(193, 18, 31, 0.22);
-  transform: translate3d(0, -0.15rem, 0);
+  box-shadow: 0 22px 78px rgba(193, 18, 31, 0.28);
+  transform: translate3d(0, -3px, 0) scale(1.03);
 }
 
 .motion-button:active {
@@ -132,21 +155,49 @@ select {
   transform: translateZ(0);
   transform-style: preserve-3d;
   will-change: transform, box-shadow, border-color, background-color;
-  transition-duration: var(--motion-smooth);
+  transition-duration: 210ms;
   transition-timing-function: var(--motion-ease);
 }
 
 .motion-card:hover {
-  transform: translate3d(0, -0.35rem, 0) rotateX(0.4deg);
-  box-shadow: 0 26px 96px rgba(193, 18, 31, 0.15), 0 18px 70px rgba(0, 0, 0, 0.32);
+  transform: translate3d(0, -8px, 0) rotate(-0.4deg) scale(1.015);
+  box-shadow: 0 30px 110px rgba(193, 18, 31, 0.18), 0 18px 70px rgba(0, 0, 0, 0.34);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .bundle-choice-grid .bundle-choice-card {
+    transition:
+      opacity 260ms var(--motion-ease),
+      transform 220ms var(--motion-ease),
+      box-shadow 260ms var(--motion-ease),
+      border-color 260ms var(--motion-ease);
+  }
+
+  .bundle-choice-grid:has(.bundle-choice-card:hover) .bundle-choice-card {
+    opacity: 0.64;
+    transform: translate3d(0, 0, 0) scale(0.99);
+  }
+
+  .bundle-choice-grid:has(.bundle-choice-card:hover) .bundle-choice-card:hover {
+    opacity: 1;
+    transform: translate3d(0, -8px, 0) rotate(-0.25deg) scale(1.02);
+    box-shadow:
+      0 34px 125px rgba(245, 158, 11, 0.22),
+      0 22px 90px rgba(193, 18, 31, 0.14),
+      0 18px 70px rgba(0, 0, 0, 0.36);
+  }
+}
+
+.ticket-options-highlight .motion-card {
+  animation: ticket-available-pulse 1350ms var(--motion-ease) both;
 }
 
 .motion-reveal.motion-ready {
   opacity: 0;
-  transform: translate3d(0, 1.35rem, 0);
+  transform: translate3d(0, 48px, 0);
   transition:
-    opacity 640ms var(--motion-ease),
-    transform 640ms var(--motion-ease);
+    opacity 700ms var(--motion-ease),
+    transform 700ms var(--motion-ease);
   will-change: opacity, transform;
 }
 
@@ -156,42 +207,108 @@ select {
 }
 
 .motion-reveal-card.motion-ready {
-  transform: translate3d(0, 1rem, 0) scale(0.985);
+  transform: translate3d(0, 32px, 0) scale(0.97);
 }
 
 .motion-reveal-hero.motion-ready {
-  transform: translate3d(0, 1.75rem, 0);
+  transform: translate3d(0, 40px, 0) scale(0.96);
+}
+
+.hero-motion.motion-ready {
+  transition:
+    opacity 800ms var(--motion-ease),
+    transform 800ms var(--motion-ease);
+}
+
+.hero-motion-paragraph.motion-ready {
+  transform: translate3d(0, 24px, 0);
+  transition-duration: 650ms;
+}
+
+.hero-motion-cta.motion-ready {
+  transform: translate3d(0, 18px, 0) scale(0.92);
+  transition-duration: 550ms;
+}
+
+.section-motion.motion-ready {
+  transform: translate3d(0, 48px, 0);
+}
+
+.motion-reveal.motion-ready :is(h1, h2) {
+  transform: translate3d(0, 18px, 0) rotate(-0.5deg);
+  transform-origin: 100% 70%;
+  transition:
+    opacity 600ms var(--motion-ease),
+    transform 600ms var(--motion-ease);
+}
+
+.motion-reveal.motion-ready.is-visible :is(h1, h2) {
+  transform: translate3d(0, 0, 0) rotate(0deg);
+}
+
+.motion-reveal :is(h1, h2) {
+  position: relative;
+  z-index: 0;
+}
+
+.motion-reveal :is(h1, h2)::after {
+  position: absolute;
+  right: -0.12em;
+  top: 52%;
+  z-index: -1;
+  width: min(15rem, 62%);
+  height: 0.72em;
+  content: "";
+  pointer-events: none;
+  border-radius: 999px;
+  opacity: 0;
+  background: radial-gradient(ellipse at center, rgba(193, 18, 31, 0.34), rgba(193, 18, 31, 0.12) 48%, transparent 76%);
+  filter: blur(18px);
+  transform: scaleX(0);
+  transform-origin: right;
+}
+
+.motion-reveal.is-visible :is(h1, h2)::after {
+  opacity: 1;
+  transform: scaleX(1);
+  transition:
+    opacity 600ms var(--motion-ease) 120ms,
+    transform 600ms var(--motion-ease) 120ms;
 }
 
 .motion-reveal.motion-ready:not(.is-visible) .motion-card {
   opacity: 0;
-  transform: translate3d(0, 1.15rem, 0) scale(0.985);
+  transform: translate3d(0, 32px, 0) scale(0.97);
 }
 
 .motion-reveal.motion-ready.is-visible .motion-card {
   opacity: 1;
   transition:
-    opacity 560ms var(--motion-ease),
-    transform 560ms var(--motion-ease),
-    box-shadow var(--motion-smooth) var(--motion-ease),
-    border-color var(--motion-smooth) var(--motion-ease),
-    background-color var(--motion-smooth) var(--motion-ease);
+    opacity 550ms var(--motion-ease),
+    transform 550ms var(--motion-ease),
+    box-shadow 210ms var(--motion-ease),
+    border-color 210ms var(--motion-ease),
+    background-color 210ms var(--motion-ease);
 }
 
 .motion-reveal.motion-ready.is-visible .motion-card:nth-child(2) {
-  transition-delay: 80ms;
+  transition-delay: 90ms;
 }
 
 .motion-reveal.motion-ready.is-visible .motion-card:nth-child(3) {
-  transition-delay: 160ms;
+  transition-delay: 180ms;
 }
 
 .motion-reveal.motion-ready.is-visible .motion-card:nth-child(4) {
-  transition-delay: 240ms;
+  transition-delay: 270ms;
 }
 
 .motion-reveal.motion-ready.is-visible .motion-card:nth-child(5) {
-  transition-delay: 320ms;
+  transition-delay: 360ms;
+}
+
+.motion-reveal.motion-ready.is-visible .motion-card:nth-child(6) {
+  transition-delay: 450ms;
 }
 
 .image-reveal {
@@ -243,6 +360,211 @@ select {
 .motion-link[aria-current="page"]::after {
   opacity: 1;
   transform: scaleX(1);
+}
+
+.logo-entrance {
+  animation: logo-entrance-in 700ms var(--motion-ease) both;
+  transform-origin: 50% 55%;
+}
+
+.home-motion-root.home-motion-js .home-hero-headline {
+  opacity: 0;
+  transform: translate3d(0, 60px, 0) scale(0.96) !important;
+  transition:
+    opacity 1200ms linear,
+    transform 1200ms linear;
+  will-change: opacity, transform;
+}
+
+.home-motion-root.home-motion-js.home-hero-start .home-hero-headline {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1) !important;
+}
+
+.home-motion-root.home-motion-js .home-hero-paragraph {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0) !important;
+  transition:
+    opacity 650ms linear 300ms,
+    transform 650ms linear 300ms;
+  will-change: opacity, transform;
+}
+
+.home-motion-root.home-motion-js.home-hero-start .home-hero-paragraph {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) !important;
+}
+
+.home-motion-root.home-motion-js .home-hero-cta {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0) scale(0.92) !important;
+  transition:
+    opacity 550ms linear 550ms,
+    transform 550ms linear 550ms,
+    box-shadow 210ms var(--motion-ease),
+    background-color 210ms var(--motion-ease),
+    color 210ms var(--motion-ease);
+  will-change: opacity, transform;
+}
+
+.home-motion-root.home-motion-js.home-hero-start .home-hero-cta {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1) !important;
+}
+
+.home-motion-root.home-motion-js .home-section-motion {
+  opacity: 0;
+  transform: translate3d(0, 60px, 0);
+  transition:
+    opacity 900ms var(--motion-ease),
+    transform 900ms var(--motion-ease);
+  will-change: opacity, transform;
+}
+
+.home-motion-root.home-motion-js .home-section-motion.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.home-motion-root.home-motion-js .home-card-motion {
+  opacity: 0;
+  transform: translate3d(0, 50px, 0) scale(0.97);
+  transition:
+    opacity 700ms var(--motion-ease) var(--home-stagger, 0ms),
+    transform 700ms var(--motion-ease) var(--home-stagger, 0ms),
+    box-shadow 210ms var(--motion-ease),
+    border-color 210ms var(--motion-ease),
+    background-color 210ms var(--motion-ease),
+    color 210ms var(--motion-ease);
+  will-change: opacity, transform;
+}
+
+.home-motion-root.home-motion-js .home-card-motion.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+.home-motion-root .home-card-motion:hover {
+  transform: translate3d(0, -10px, 0) scale(1.02);
+}
+
+.home-motion-root .motion-button:hover {
+  transform: translate3d(0, -4px, 0) scale(1.04);
+}
+
+.home-motion-root.home-motion-js .home-card-motion.is-visible:hover {
+  transform: translate3d(0, -10px, 0) scale(1.02);
+}
+
+.home-motion-root.home-motion-js.home-hero-start .home-hero-cta:hover,
+.home-motion-root.home-motion-js .motion-button:hover {
+  transform: translate3d(0, -4px, 0) scale(1.04) !important;
+}
+
+.street-sticker {
+  opacity: 1;
+  transform: rotate(-2deg) scale(1);
+}
+
+.rough-red-stroke {
+  z-index: 0;
+  opacity: 0.9;
+  transform: scaleX(1);
+  transform-origin: right center;
+  border-radius: 999px;
+  background: radial-gradient(ellipse at center, rgba(193, 18, 31, 0.34), rgba(193, 18, 31, 0.12) 48%, transparent 78%);
+  filter: blur(16px);
+}
+
+.rough-red-stroke::before {
+  position: absolute;
+  inset: -0.4rem;
+  content: "";
+  border-radius: 999px;
+  opacity: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+  transform: translateX(120%);
+  animation: headline-light-sweep 4.8s var(--motion-ease) 1.4s infinite;
+}
+
+.section-number-stamp {
+  z-index: 0;
+  font-size: clamp(7rem, 16vw, 15rem);
+  opacity: 0.045;
+  transform: translate3d(-1rem, 0, 0);
+  text-shadow: 0 0 54px rgba(193, 18, 31, 0.18);
+}
+
+.home-motion-root.home-motion-js .street-sticker {
+  opacity: 0;
+  transform: rotate(-6deg) scale(0.8);
+  transition:
+    opacity 500ms var(--motion-ease) 140ms,
+    transform 500ms var(--motion-ease) 140ms;
+}
+
+.home-motion-root.home-motion-js .rough-red-stroke {
+  transform: scaleX(0);
+  transition: transform 640ms var(--motion-ease) 180ms;
+}
+
+.home-motion-root.home-motion-js .section-number-stamp {
+  opacity: 0;
+  transform: translate3d(-2.25rem, 0, 0);
+  transition:
+    opacity 760ms var(--motion-ease),
+    transform 760ms var(--motion-ease);
+}
+
+.home-motion-root.home-motion-js .home-section-motion.is-visible .street-sticker {
+  opacity: 1;
+  transform: rotate(-2deg) scale(1);
+}
+
+.home-motion-root.home-motion-js .home-section-motion.is-visible .rough-red-stroke {
+  transform: scaleX(1);
+}
+
+.home-motion-root.home-motion-js .home-section-motion.is-visible .section-number-stamp {
+  opacity: 0.045;
+  transform: translate3d(0, 0, 0);
+}
+
+.home-primary-cta-inner {
+  display: inline-block;
+  transform-origin: center;
+}
+
+.home-motion-root.home-motion-js.home-hero-start .home-primary-cta-inner {
+  animation: home-cta-pulse 720ms var(--motion-ease) 1750ms both;
+}
+
+.home-motion-root .home-card-motion:hover {
+  border-color: rgba(193, 18, 31, 0.78);
+  box-shadow:
+    0 0 0 1px rgba(193, 18, 31, 0.22),
+    0 28px 92px rgba(193, 18, 31, 0.18),
+    0 18px 70px rgba(0, 0, 0, 0.36);
+}
+
+.home-motion-root .home-card-grid > .home-card-motion:nth-child(odd):hover,
+.home-motion-root .home-card-grid > .motion-reveal:nth-child(odd) .home-card-motion:hover {
+  transform: translate3d(0, -10px, 0) rotate(-0.25deg) scale(1.02);
+}
+
+.home-motion-root .home-card-grid > .home-card-motion:nth-child(even):hover,
+.home-motion-root .home-card-grid > .motion-reveal:nth-child(even) .home-card-motion:hover {
+  transform: translate3d(0, -10px, 0) rotate(0.25deg) scale(1.02);
+}
+
+.home-motion-root.home-motion-js .home-card-grid > .home-card-motion.is-visible:nth-child(odd):hover,
+.home-motion-root.home-motion-js .home-card-grid > .motion-reveal:nth-child(odd) .home-card-motion.is-visible:hover {
+  transform: translate3d(0, -10px, 0) rotate(-0.25deg) scale(1.02);
+}
+
+.home-motion-root.home-motion-js .home-card-grid > .home-card-motion.is-visible:nth-child(even):hover,
+.home-motion-root.home-motion-js .home-card-grid > .motion-reveal:nth-child(even) .home-card-motion.is-visible:hover {
+  transform: translate3d(0, -10px, 0) rotate(0.25deg) scale(1.02);
 }
 
 .route-transition {
@@ -328,6 +650,18 @@ select {
   }
 }
 
+@keyframes logo-entrance-in {
+  from {
+    opacity: 0;
+    transform: rotate(-4deg) scale(0.85);
+  }
+
+  to {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+}
+
 @keyframes scroll-cue {
   0%,
   100% {
@@ -389,6 +723,17 @@ select {
   }
 }
 
+@keyframes home-cta-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  48% {
+    transform: scale(1.035);
+  }
+}
+
 @keyframes sticker-contact {
   0%,
   40% {
@@ -404,6 +749,46 @@ select {
   100% {
     opacity: 0;
     transform: scale(1.08);
+  }
+}
+
+@keyframes headline-light-sweep {
+  0%,
+  72%,
+  100% {
+    opacity: 0;
+    transform: translateX(120%);
+  }
+
+  82% {
+    opacity: 0.34;
+  }
+
+  92% {
+    opacity: 0;
+    transform: translateX(-120%);
+  }
+}
+
+@keyframes ticket-available-pulse {
+  0% {
+    border-color: rgba(245, 158, 11, 0.34);
+    box-shadow: 0 24px 90px rgba(0, 0, 0, 0.34);
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  36% {
+    border-color: rgba(245, 158, 11, 0.78);
+    box-shadow:
+      0 34px 125px rgba(245, 158, 11, 0.26),
+      0 20px 86px rgba(193, 18, 31, 0.12);
+    transform: translate3d(0, -4px, 0) scale(1.012);
+  }
+
+  100% {
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 24px 90px rgba(0, 0, 0, 0.34);
+    transform: translate3d(0, 0, 0) scale(1);
   }
 }
 
@@ -423,11 +808,35 @@ select {
 
   .motion-reveal.motion-ready,
   .motion-reveal.motion-ready:not(.is-visible) .motion-card,
+  .motion-reveal.motion-ready :is(h1, h2),
+  .hero-motion.motion-ready,
+  .home-motion-root.home-motion-js .home-hero-headline,
+  .home-motion-root.home-motion-js .home-hero-paragraph,
+  .home-motion-root.home-motion-js .home-hero-cta,
+  .home-motion-root.home-motion-js .home-section-motion,
+  .home-motion-root.home-motion-js .home-card-motion,
+  .home-motion-root.home-motion-js .street-sticker,
+  .home-motion-root.home-motion-js .rough-red-stroke,
+  .home-motion-root.home-motion-js .section-number-stamp,
+  .home-primary-cta-inner,
+  .logo-entrance,
   .route-transition,
   .route-transition-exit,
   .hero-background-drift {
     opacity: 1 !important;
     transform: none !important;
+  }
+
+  .motion-reveal :is(h1, h2)::after,
+  .motion-reveal.is-visible :is(h1, h2)::after {
+    opacity: 1 !important;
+    transform: scaleX(1) !important;
+    transition: none !important;
+  }
+
+  .rough-red-stroke::before {
+    animation: none !important;
+    opacity: 0 !important;
   }
 }
 
