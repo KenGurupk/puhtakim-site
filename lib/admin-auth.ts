@@ -3,6 +3,10 @@ import type { NextRequest } from "next/server";
 export const adminSessionCookieName = "pt_admin_session";
 
 const sessionMaxAgeSeconds = 60 * 60 * 8;
+const temporaryAdminUsername = "pushtakim-admin";
+const temporaryAdminPasswordSalt = "0vUevLYtEyN6tq7ZswEqHA";
+const temporaryAdminPasswordHash = "5tVH5ZE6R8NIRw9zm_ZapVbpEIpbwrXxxgElXEn4WCw";
+const temporaryAdminPasswordIterations = 210000;
 
 const edgeCredentialNoisePattern = /^[\s\uFEFF\u200B-\u200F\u202A-\u202E\u2060\u2066-\u2069\u00A0]+|[\s\uFEFF\u200B-\u200F\u202A-\u202E\u2060\u2066-\u2069\u00A0]+$/g;
 
@@ -45,6 +49,10 @@ function base64UrlEncode(value: string) {
   return Buffer.from(value, "utf8").toString("base64url");
 }
 
+function bytesToBase64Url(bytes: Uint8Array) {
+  return Buffer.from(bytes).toString("base64url");
+}
+
 function base64UrlDecode(value: string) {
   const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
   const padded = normalized.padEnd(normalized.length + ((4 - (normalized.length % 4)) % 4), "=");
@@ -66,6 +74,22 @@ async function hmacSha256(value: string, secret: string) {
   return base64UrlEncode(binary);
 }
 
+async function pbkdf2Sha256(password: string, salt: string) {
+  const key = await crypto.subtle.importKey("raw", textBytes(password), "PBKDF2", false, ["deriveBits"]);
+  const bits = await crypto.subtle.deriveBits(
+    {
+      name: "PBKDF2",
+      hash: "SHA-256",
+      salt: textBytes(salt),
+      iterations: temporaryAdminPasswordIterations
+    },
+    key,
+    256
+  );
+
+  return bytesToBase64Url(new Uint8Array(bits));
+}
+
 function timingSafeEqual(left: string, right: string) {
   const leftBytes = textBytes(left);
   const rightBytes = textBytes(right);
@@ -81,21 +105,49 @@ function timingSafeEqual(left: string, right: string) {
 
 export function adminAuthConfigured() {
   const { username, password } = getAdminCredentials();
-  return Boolean(username && password);
+  return Boolean((username && password) || (temporaryAdminUsername && temporaryAdminPasswordHash));
 }
 
-export function validateAdminCredentials(username: string, password: string) {
+export async function validateAdminCredentials(username: string, password: string) {
   const expected = getAdminCredentials();
+  const normalizedUsername = normalizeCredential(username);
+  const normalizedPassword = normalizeCredential(password);
 
-  if (!expected.username || !expected.password) {
+  if (expected.username && expected.password) {
+    const envCredentialsMatch =
+      timingSafeEqual(normalizedUsername, expected.username) && timingSafeEqual(normalizedPassword, expected.password);
+
+    if (envCredentialsMatch) {
+      return true;
+    }
+  }
+
+  if (!timingSafeEqual(normalizedUsername, temporaryAdminUsername)) {
     return false;
   }
 
-  return timingSafeEqual(normalizeCredential(username), expected.username) && timingSafeEqual(normalizeCredential(password), expected.password);
+  const submittedHash = await pbkdf2Sha256(normalizedPassword, temporaryAdminPasswordSalt);
+  return timingSafeEqual(submittedHash, temporaryAdminPasswordHash);
+}
+
+function getAdminSessionIdentity() {
+  const { username, password } = getAdminCredentials();
+
+  if (username && password) {
+    return {
+      username,
+      secret: `${username}:${password}`
+    };
+  }
+
+  return {
+    username: temporaryAdminUsername,
+    secret: `${temporaryAdminUsername}:${temporaryAdminPasswordHash}`
+  };
 }
 
 export async function createAdminSessionToken() {
-  const { username, password } = getAdminCredentials();
+  const { username, secret } = getAdminSessionIdentity();
   const now = Math.floor(Date.now() / 1000);
   const payload = {
     sub: username,
@@ -103,7 +155,7 @@ export async function createAdminSessionToken() {
     exp: now + sessionMaxAgeSeconds
   };
   const payloadToken = base64UrlEncode(JSON.stringify(payload));
-  const signature = await hmacSha256(payloadToken, `${username}:${password}`);
+  const signature = await hmacSha256(payloadToken, secret);
 
   return `${payloadToken}.${signature}`;
 }
@@ -119,8 +171,8 @@ export async function isValidAdminSessionToken(token: string | undefined) {
     return false;
   }
 
-  const { username, password } = getAdminCredentials();
-  const expectedSignature = await hmacSha256(payloadToken, `${username}:${password}`);
+  const { username, secret } = getAdminSessionIdentity();
+  const expectedSignature = await hmacSha256(payloadToken, secret);
 
   if (!timingSafeEqual(signature, expectedSignature)) {
     return false;

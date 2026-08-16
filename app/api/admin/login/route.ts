@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     return NextResponse.redirect(new URL("/admin/login?error=config", request.url), 303);
   }
 
-  if (!validateAdminCredentials(username, password)) {
+  if (!(await validateAdminCredentials(username, password))) {
     const loginUrl = new URL("/admin/login", request.url);
     loginUrl.searchParams.set("error", "invalid");
     loginUrl.searchParams.set("next", nextPath);
