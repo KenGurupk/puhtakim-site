@@ -115,8 +115,8 @@ const eventPresentation: Record<
     isCompleted: true
   },
   "push-tour-pk-spot": {
-    statusBadge: "התחנה הבאה",
-    isHighlighted: true,
+    statusBadge: "הסתיים בהצלחה ✓",
+    isCompleted: true,
     displayTitle: "Push Tour מגיע לבאר שבע",
     displayDescription: "אירוע פארקור ב־PK Spot עם וייב תחרותי, קהילה, אתגרים והרבה תנועה."
   },
@@ -127,7 +127,7 @@ const eventPresentation: Record<
   }
 };
 
-const eventDisplayOrder = ["push-tour-pk-spot", "push-tour-calima", "push-tour-raiz", "push-tour-mabuza"];
+const eventDisplayOrder = ["push-tour-calima", "push-tour-pk-spot", "push-tour-raiz", "push-tour-mabuza"];
 
 export default function EventsPage() {
   const orderedEvents = eventDisplayOrder.flatMap((eventId) => events.filter((event) => event.id === eventId));
@@ -153,12 +153,12 @@ export default function EventsPage() {
         <div className="mx-auto flex min-h-[72vh] max-w-7xl flex-col justify-center px-5 py-28 sm:px-8 lg:min-h-[78vh]">
           <Reveal>
             <div className="max-w-4xl">
-              <p className="text-sm font-black tracking-[0.18em] text-blood">המסע כבר בשלב האחרון 🔥</p>
+              <p className="text-sm font-black tracking-[0.18em] text-blood">המסע כבר בשלב הסיום 🔥</p>
               <h1 className="mt-6 text-4xl font-black leading-tight tracking-tight text-white sm:text-6xl lg:text-7xl">
-                2 אירועים מאחורינו. נשארו שניים אחרונים.
+                3 אירועים מאחורינו. נשאר אירוע סיום אחד.
               </h1>
               <p className="mt-7 max-w-3xl text-lg font-bold leading-8 text-zinc-200 sm:text-xl">
-                מבוזה ומודיעין כבר מאחורינו. עכשיו ממשיכים לבאר שבע ולראשון לציון עם עוד סדנאות, אתגרים, פרסים וקהילות מכל הארץ.
+                מבוזה, מודיעין ובאר שבע כבר מאחורינו. עכשיו ממשיכים לראשון לציון לאירוע הסיום של Push Tour 2026.
               </p>
               <div className="mt-9">
                 <DiscountedTicketCta label="למפגשים ולכרטיסים ↓" />
@@ -226,7 +226,7 @@ export default function EventsPage() {
         </Reveal>
       </Section>
 
-      <Section id="event-stops" eyebrow="תחנות הטור" title="שתי התחנות האחרונות" description="מבוזה ומודיעין הסתיימו בהצלחה. עכשיו נשארו באר שבע וראשון לציון, וכל כרטיס באתר שייך רק לאחת מהתחנות שעדיין פתוחות.">
+      <Section id="event-stops" eyebrow="תחנות הטור" title="התחנה האחרונה" description="מבוזה, מודיעין ובאר שבע הסתיימו בהצלחה. עכשיו נשאר אירוע הסיום בראשון לציון, וכל כרטיס באתר שייך רק לתחנה שעדיין פתוחה.">
         <div className="grid gap-4 lg:grid-cols-2">
           {displayedEvents.map((event, index) => (
             <EventCard
@@ -241,9 +241,9 @@ export default function EventsPage() {
       </Section>
 
       <PushTourPricing
-        title={"2 אירועים מאחורינו.\nנשארו שניים אחרונים 🔥"}
-        subtitle="באר שבע או ראשון לציון? בחרו את התחנה שלכם ובואו לסיים איתנו את הסבב."
-        valueLine="שתי אפשרויות בלבד: מחיר מיוחד לבאר שבע, וכרטיס לאירוע הסיום בראשון לציון."
+        title={"3 אירועים מאחורינו.\nנשאר אירוע סיום אחד 🔥"}
+        subtitle="ראשון לציון מחכה לנו. בואו לסיים איתנו את הסבב ב־Calima."
+        valueLine="אפשרות רכישה אחת בלבד: כרטיס לאירוע הסיום בראשון לציון."
         question={null}
         showFaq={false}
       />

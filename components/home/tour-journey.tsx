@@ -62,13 +62,11 @@ function TourStopCard({ event, index }: { event: TourStop; index: number }) {
   const isInView = useInView(ref, { amount: 0.58, margin: "-18% 0px -34% 0px" });
   const scheduleRows = getScheduleRows(event);
   const ticketPlanId =
-    event.id === "push-tour-pk-spot"
-      ? "beer-sheva-special"
-      : event.id === "push-tour-calima"
+    event.id === "push-tour-calima"
         ? "calima-single"
         : undefined;
   const checkoutTicket = ticketPlanId ? getCheckoutTicketByPlanId(ticketPlanId) : undefined;
-  const isCompleted = event.id === "push-tour-mabuza" || event.id === "push-tour-raiz";
+  const isCompleted = event.id === "push-tour-mabuza" || event.id === "push-tour-raiz" || event.id === "push-tour-pk-spot";
 
   return (
     <>
@@ -159,8 +157,8 @@ function TourStopCard({ event, index }: { event: TourStop; index: number }) {
         <button
           ref={buttonRef}
           type="button"
-          onClick={() => checkoutTicket && setIsCheckoutOpen(true)}
-          disabled={!checkoutTicket}
+          onClick={() => !isCompleted && checkoutTicket && !checkoutTicket.salesClosed && setIsCheckoutOpen(true)}
+          disabled={isCompleted || !checkoutTicket || checkoutTicket.salesClosed}
           className="motion-button mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-2xl bg-blood px-5 py-3 text-center text-sm font-black text-white transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-black active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isCompleted ? "הסתיים בהצלחה" : siteCopy.home.tour.cardCta}

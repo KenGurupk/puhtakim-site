@@ -35,13 +35,11 @@ export function EventCard({
   const ticket = getTicketAction(event);
   const typeLabel = siteCopy.shared.eventTypes[event.type];
   const ticketPlanId =
-    event.id === "push-tour-pk-spot"
-      ? "beer-sheva-special"
-      : event.id === "push-tour-calima"
+    event.id === "push-tour-calima"
         ? "calima-single"
         : undefined;
   const checkoutTicket = ticketPlanId ? getCheckoutTicketByPlanId(ticketPlanId) : undefined;
-  const canOpenCheckout = !isCompleted && ticket.enabled && event.ticketStatus === "available" && Boolean(checkoutTicket);
+  const canOpenCheckout = !isCompleted && ticket.enabled && event.ticketStatus === "available" && Boolean(checkoutTicket) && !checkoutTicket?.salesClosed;
   const canUseCta = !isCompleted && ticket.enabled && event.ticketStatus === "available";
   const scrollToTickets = () => {
     const ticketsSection = document.getElementById("tickets");

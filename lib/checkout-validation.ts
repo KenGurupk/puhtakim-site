@@ -53,7 +53,7 @@ export function validateCheckoutIntentPayload(payload: unknown): ValidationResul
   }
 
   if (ticket.salesClosed) {
-    return { ok: false, error: "הכרטיס הזה כבר לא זמין. אפשר לבחור כרטיס לבאר שבע או כרטיס לראשון לציון." };
+    return { ok: false, error: "הכרטיס הזה כבר לא זמין. אפשר לבחור כרטיס לאירוע הסיום בראשון לציון." };
   }
 
   const fullName = String(input.fullName ?? "").trim();

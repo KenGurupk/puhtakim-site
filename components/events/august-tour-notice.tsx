@@ -20,12 +20,12 @@ export function AugustTourNotice() {
           <div className="max-w-4xl">
             <p className="text-xs font-black tracking-[0.16em] text-amber-200">המסע ממשיך עכשיו</p>
             <h2 className="mt-3 text-2xl font-black leading-tight text-white sm:text-4xl">
-              נשארו שני אירועים אחרונים, וכל אחד מהם מביא קהילה אחרת לתנועה.
+              נשאר אירוע סיום אחד, והוא מביא את כל הסבב לרגע האחרון.
             </h2>
             <p className="mt-3 text-base font-bold leading-7 text-zinc-200">
-              באר שבע וראשון לציון מחכות עם סדנאות, אימון פתוח, אתגרים, פרסים ואתלטים מכל הארץ.
+              ראשון לציון מחכה עם סדנה, אימון פתוח, אתגרים, פרסים ואתלטים מכל הארץ.
             </p>
-            <p className="mt-2 text-sm font-black text-blood">המשיכו למפגשים הקרובים ולכרטיסים ↓</p>
+            <p className="mt-2 text-sm font-black text-blood">המשיכו לאירוע הסיום ולכרטיסים ↓</p>
           </div>
 
           <button

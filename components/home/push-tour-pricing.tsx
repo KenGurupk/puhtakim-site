@@ -15,7 +15,7 @@ type PushTourPricingProps = {
 
 export function PushTourPricing({ title, subtitle, question, valueLine, showFaq = true }: PushTourPricingProps = {}) {
   const questionText = question === undefined ? pricing.question : question;
-  const availablePlans = pricing.plans.filter((plan) => plan.id === "beer-sheva-special" || plan.id === "calima-single");
+  const availablePlans = pricing.plans.filter((plan) => plan.id === "calima-single");
 
   return (
     <section id="tickets" className="relative isolate overflow-hidden border-b border-white/10 bg-black px-5 py-24 sm:px-8 sm:py-32 lg:py-40">
@@ -50,7 +50,7 @@ export function PushTourPricing({ title, subtitle, question, valueLine, showFaq 
 
         <div id="available-ticket-options" className="bundle-choice-grid mt-12 grid gap-5 md:grid-cols-2 md:items-stretch">
           {availablePlans.map((plan, index) => {
-            const role = plan.id === "beer-sheva-special" ? "התחנה הבאה" : "אירוע הסיום";
+            const role = "אירוע הסיום";
             const availability = undefined;
 
             return (
@@ -59,7 +59,7 @@ export function PushTourPricing({ title, subtitle, question, valueLine, showFaq 
                   plan={plan}
                   role={role}
                   availability={availability}
-                  emphasis={plan.id === "beer-sheva-special" ? "bundle" : "standard"}
+                  emphasis="standard"
                 />
               </Reveal>
             );

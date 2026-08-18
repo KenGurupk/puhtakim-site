@@ -62,14 +62,16 @@ export const checkoutConfig = {
     {
       type: "beer-sheva-special",
       planId: "beer-sheva-special",
-      name: "כרטיס באר שבע / PK Spot",
+      name: "כרטיס באר שבע / PK Spot - סגור",
       price: 120,
       priceLabel: "120₪",
-      growUrl: "https://pay.grow.link/MTAzMDM2~f45480feaafd8e59b5b61157647c4be2-Mzg0MjEyOA",
+      growUrl: "",
+      salesClosed: true,
       selectionMode: "fixed",
       fixedEventIds: ["push-tour-pk-spot"],
       requiredEventCount: 1,
-      ctaId: "beer-sheva-special"
+      ctaId: "beer-sheva-special",
+      note: "אירוע באר שבע הסתיים."
     },
     {
       type: "single",

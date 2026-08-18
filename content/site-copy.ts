@@ -124,8 +124,8 @@ export const siteCopy = {
       cardCta: "שמרו לי מקום"
     },
     pricing: {
-      title: "2 אירועים מאחורינו.\nנשארו שניים אחרונים 🔥",
-      subtitle: "באר שבע או ראשון לציון? בחרו את התחנה שלכם ובואו לסיים איתנו את הסבב.",
+      title: "3 אירועים מאחורינו.\nנשאר אירוע סיום אחד 🔥",
+      subtitle: "ראשון לציון מחכה לנו. בואו לסיים איתנו את הסבב ב־Calima.",
       question: null,
       availability: {
         earlyBirdMabuza: {
@@ -136,24 +136,6 @@ export const siteCopy = {
         }
       },
       plans: [
-        {
-          id: "beer-sheva-special",
-          eyebrow: "מחיר מיוחד לבאר שבע 🔥",
-          title: "אירוע פארקור בבאר שבע",
-          price: "₪120",
-          originalPrice: "₪200",
-          badge: "התחנה הבאה",
-          saving: "₪120 במקום ₪200",
-          event: "PK Spot / באר שבע / 16.08.2026",
-          description: "נפגשים ב־PK Spot לאירוע עם וייב תחרותי, קהילה, אתגרים והרבה תנועה.",
-          featured: true,
-          benefits: [
-            "אירוע פארקור בבאר שבע",
-            "מחיר מיוחד לאירוע: ₪120 במקום ₪200",
-            "סבב סקיל קהילתי, גמר ואימון פתוח"
-          ],
-          cta: "לכרטיס באר שבע | ₪120",
-        },
         {
           id: "calima-single",
           eyebrow: "🏁 אירוע הסיום",
@@ -170,13 +152,13 @@ export const siteCopy = {
         }
       ],
       comparison: {
-        columns: ["באר שבע", "ראשון לציון"],
+        columns: ["ראשון לציון"],
         rows: [
-          { label: "מספר אירועים", values: ["1", "1"] },
-          { label: "מחיר", values: ["₪120", "₪200"] },
-          { label: "מיקום", values: ["PK Spot", "Calima"] },
-          { label: "תאריך", values: ["16.08", "28.08"] },
-          { label: "מתאים למי", values: ["מי שמגיע לתחנה הקרובה", "מי שרוצה להיות באירוע הסיום"] }
+          { label: "מספר אירועים", values: ["1"] },
+          { label: "מחיר", values: ["₪200"] },
+          { label: "מיקום", values: ["Calima"] },
+          { label: "תאריך", values: ["28.08"] },
+          { label: "מתאים למי", values: ["מי שרוצה להיות באירוע הסיום"] }
         ]
       },
       health: {
@@ -330,7 +312,7 @@ export const siteCopy = {
         address: "מבצע יואב 49, באר שבע",
         type: "event",
         description: "ספוטים בחוץ, מוקדמות תחרות סקיל, הפסקה, גמר באולם ואימון פתוח.",
-        ticketStatus: "available",
+        ticketStatus: "sold-out",
         ticketUrl: "/contact?topic=push-tour-pk-spot"
       },
       {
