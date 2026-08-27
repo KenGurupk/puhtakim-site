@@ -76,10 +76,10 @@ export const siteCopy = {
         stop: "תחנה 4",
         city: "ראשון לציון",
         date: "28.08",
-        time: "10:30-13:00",
+        time: "12:00-15:00",
         venue: "Calima",
         address: "הכשרת היישוב 10, ראשון לציון",
-        schedule: "סדנת טריקים משותפים, אימון פתוח, אתגרים ופרסים."
+        schedule: "התכנסות, סדנת טריקים חדשים, אימון פתוח ואתגרים זוכי פרסים."
       }
     ],
     takeaways: [
@@ -319,11 +319,11 @@ export const siteCopy = {
         id: "push-tour-calima",
         title: "Push Tour 2026 ב־Calima",
         date: "28.08",
-        time: "10:30-13:00",
+        time: "12:00-15:00",
         location: "ראשון לציון",
         address: "הכשרת היישוב 10, ראשון לציון",
         type: "workshop",
-        description: "סדנת טריקים משותפים, אימון פתוח, אתגרים ופרסים.",
+        description: "התכנסות, סדנת טריקים חדשים, אימון פתוח ואתגרים זוכי פרסים.",
         ticketStatus: "available",
         ticketUrl: "/contact?topic=push-tour-calima"
       }
