@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { createRequestContext } from "@/lib/api-logging";
 import { validateCheckoutIntentPayload } from "@/lib/checkout-validation";
 import { createServerCheckoutReference, getCentralStorageStatus, saveSalesRecordWithInventoryGuard } from "@/lib/sales-db";
+import { sendRegistrationNotification } from "@/lib/registration-email";
 
 export async function POST(request: Request) {
   const context = createRequestContext("/api/checkout-intents");
@@ -46,6 +47,13 @@ export async function POST(request: Request) {
       ctaId: validation.ctaId,
       utm: validation.utm
     });
+
+    try {
+      const email = await sendRegistrationNotification(intent);
+      context.log(200, { checkoutReference: intent.checkoutReference, registrationEmail: email.sent ? "sent" : email.reason });
+    } catch (emailError) {
+      context.log(200, { checkoutReference: intent.checkoutReference, registrationEmail: "failed", reason: emailError instanceof Error ? emailError.message : "unknown_error" });
+    }
 
     context.log(200, {
       checkoutReference: intent.checkoutReference,

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { checkoutConfig } from "@/lib/checkout-config";
 import type { CheckoutCompliance } from "@/lib/checkout-intents";
+import { sendRegistrationNotification } from "@/lib/registration-email";
 import { createRequestContext } from "@/lib/api-logging";
 import {
   acquireManualCheckinLock,
@@ -164,113 +165,119 @@ export async function POST(request: Request) {
   }
 
   try {
-  const paidMatch = await findPaidRecordForCheckin({ fullName, phone, email });
+    const paidMatch = await findPaidRecordForCheckin({ fullName, phone, email });
 
-  if (paidMatch) {
-    const updated = await updateSalesRecord({
-      ...paidMatch,
+    if (paidMatch) {
+      const updated = await updateSalesRecord({
+        ...paidMatch,
+        updatedAt: now,
+        fullName: paidMatch.fullName || fullName,
+        phone: paidMatch.phone || phone,
+        email: paidMatch.email || email,
+        dateOfBirth: paidMatch.dateOfBirth || dateOfBirth,
+        checkinFormCompleted: true,
+        registrationSource: "Missing Forms Completion",
+        compliance: {
+          ...paidMatch.compliance,
+          ...compliance,
+          photoConsent: paidMatch.compliance?.photoConsent ?? compliance.photoConsent
+        },
+        notes: [paidMatch.notes, "Forms completed at event check-in"].filter(Boolean).join(" | ")
+      });
+      await sendRegistrationNotification(updated).catch((error) =>
+        context.log(200, { checkoutReference: updated.checkoutReference, registrationEmail: "failed", reason: error instanceof Error ? error.message : "unknown_error" })
+      );
+
+      context.log(200, {
+        checkoutReference: updated.checkoutReference,
+        status: updated.status,
+        paymentProvider: updated.paymentProvider,
+        mergedWithPaidRecord: true
+      });
+
+      return NextResponse.json({
+        ok: true,
+        checkoutReference: updated.checkoutReference,
+        requiresMedicalApproval,
+        matchedExistingPaidRegistration: true,
+        requestId: context.requestId
+      });
+    }
+
+    const existingManualCheckin = await findExistingManualCheckinRecord({
+      fullName,
+      phone,
+      email,
+      selectedEventId: openingEvent?.id
+    });
+
+    if (existingManualCheckin) {
+      context.log(200, {
+        checkoutReference: existingManualCheckin.checkoutReference,
+        status: existingManualCheckin.status,
+        paymentProvider: existingManualCheckin.paymentProvider,
+        duplicateManualCheckinPrevented: true
+      });
+
+      return NextResponse.json({
+        ok: true,
+        checkoutReference: existingManualCheckin.checkoutReference,
+        requiresMedicalApproval,
+        duplicatePrevented: true,
+        requestId: context.requestId
+      });
+    }
+
+    const record = await saveSalesRecord({
+      checkoutReference: createServerCheckoutReference(),
+      createdAt: now,
       updatedAt: now,
-      fullName: paidMatch.fullName || fullName,
-      phone: paidMatch.phone || phone,
-      email: paidMatch.email || email,
-      dateOfBirth: paidMatch.dateOfBirth || dateOfBirth,
+      ticketType: "single",
+      ticketName: "הרשמת צ׳ק-אין במקום",
+      price: 0,
+      selectedEventIds: openingEvent ? [openingEvent.id] : [],
+      selectedEvents: openingEvent
+        ? [
+            {
+              id: openingEvent.id,
+              name: openingEvent.name,
+              venue: openingEvent.venue,
+              city: openingEvent.city,
+              date: openingEvent.date
+            }
+          ]
+        : [],
+      fullName,
+      phone,
+      email,
+      dateOfBirth,
+      status: "pending_cash",
+      paymentProvider: "cash",
+      paymentMethod: "Cash",
       checkinFormCompleted: true,
-      registrationSource: "Missing Forms Completion",
-      compliance: {
-        ...paidMatch.compliance,
-        ...compliance,
-        photoConsent: paidMatch.compliance?.photoConsent ?? compliance.photoConsent
-      },
-      notes: [paidMatch.notes, "Forms completed at event check-in"].filter(Boolean).join(" | ")
+      registrationSource: "Cash / Walk-in",
+      notes: "Created from event QR check-in form",
+      compliance,
+      sourcePage: "/checkin",
+      ctaId: "event-checkin",
+      utm: {}
     });
+    await sendRegistrationNotification(record).catch((error) =>
+      context.log(200, { checkoutReference: record.checkoutReference, registrationEmail: "failed", reason: error instanceof Error ? error.message : "unknown_error" })
+    );
 
     context.log(200, {
-      checkoutReference: updated.checkoutReference,
-      status: updated.status,
-      paymentProvider: updated.paymentProvider,
-      mergedWithPaidRecord: true
+      checkoutReference: record.checkoutReference,
+      status: record.status,
+      paymentProvider: record.paymentProvider
     });
 
     return NextResponse.json({
       ok: true,
-      checkoutReference: updated.checkoutReference,
+      checkoutReference: record.checkoutReference,
       requiresMedicalApproval,
-      matchedExistingPaidRegistration: true,
       requestId: context.requestId
     });
-  }
-
-  const existingManualCheckin = await findExistingManualCheckinRecord({
-    fullName,
-    phone,
-    email,
-    selectedEventId: openingEvent?.id
-  });
-
-  if (existingManualCheckin) {
-    context.log(200, {
-      checkoutReference: existingManualCheckin.checkoutReference,
-      status: existingManualCheckin.status,
-      paymentProvider: existingManualCheckin.paymentProvider,
-      duplicateManualCheckinPrevented: true
-    });
-
-    return NextResponse.json({
-      ok: true,
-      checkoutReference: existingManualCheckin.checkoutReference,
-      requiresMedicalApproval,
-      duplicatePrevented: true,
-      requestId: context.requestId
-    });
-  }
-
-  const record = await saveSalesRecord({
-    checkoutReference: createServerCheckoutReference(),
-    createdAt: now,
-    updatedAt: now,
-    ticketType: "single",
-    ticketName: "הרשמת צ׳ק-אין במקום",
-    price: 0,
-    selectedEventIds: openingEvent ? [openingEvent.id] : [],
-    selectedEvents: openingEvent
-      ? [
-          {
-            id: openingEvent.id,
-            name: openingEvent.name,
-            venue: openingEvent.venue,
-            city: openingEvent.city,
-            date: openingEvent.date
-          }
-        ]
-      : [],
-    fullName,
-    phone,
-    email,
-    dateOfBirth,
-    status: "pending_cash",
-    paymentProvider: "cash",
-    paymentMethod: "Cash",
-    checkinFormCompleted: true,
-    registrationSource: "Cash / Walk-in",
-    notes: "Created from event QR check-in form",
-    compliance,
-    sourcePage: "/checkin",
-    ctaId: "event-checkin",
-    utm: {}
-  });
-
-  context.log(200, {
-    checkoutReference: record.checkoutReference,
-    status: record.status,
-    paymentProvider: record.paymentProvider
-  });
-
-  return NextResponse.json({
-    ok: true,
-    checkoutReference: record.checkoutReference,
-    requiresMedicalApproval,
-    requestId: context.requestId
-  });
   } finally {
     await releaseManualCheckinLock(manualCheckinLock);
   }
