@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import type { CheckoutIntent } from "@/lib/checkout-intents";
 import { createRequestContext } from "@/lib/api-logging";
 import { getCentralStorageStatus, listSalesRecords } from "@/lib/sales-db";
+import { fullRegistrationExport } from "@/lib/registration-form";
 
 type FileEntry = {
   name: string;
@@ -276,6 +277,10 @@ export async function GET(request: Request) {
 
   const url = new URL(request.url);
   const purchases = (await listSalesRecords()).filter((intent) => matchesFilters(intent, url.searchParams));
+  const full = url.searchParams.get("full") === "true";
+  const fullExport = fullRegistrationExport();
+  const fullHeaders = fullExport.headers;
+  const fullRows = purchases.map(fullExport.row);
   const headers = [
     "Full name",
     "Age",
@@ -308,10 +313,10 @@ export async function GET(request: Request) {
   ]);
 
   context.log(200, { count: rows.length });
-  return new NextResponse(workbookBuffer(headers, rows), {
+  return new NextResponse(workbookBuffer(full ? fullHeaders : headers, full ? fullRows : rows), {
     headers: {
       "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      "Content-Disposition": `attachment; filename="pushtakim-updated-event-list.xlsx"`,
+      "Content-Disposition": `attachment; filename="${full ? "pushtakim-full-registration-forms" : "pushtakim-updated-event-list"}.xlsx"`,
       "Cache-Control": "no-store"
     }
   });

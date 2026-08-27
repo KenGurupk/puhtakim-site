@@ -15,7 +15,10 @@ export async function GET() {
   }
 
   try {
-    const purchases = await listSalesRecords();
+    const purchases = (await listSalesRecords()).map((purchase) => ({
+      ...purchase,
+      compliance: purchase.compliance ? { ...purchase.compliance, healthAnswers: undefined, guardianPhone: undefined } : undefined
+    }));
     context.log(200, { count: purchases.length });
     return NextResponse.json({ purchases, requestId: context.requestId });
   } catch (error) {
