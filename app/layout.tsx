@@ -4,6 +4,7 @@ import { Noto_Sans_Hebrew } from "next/font/google";
 import "@/app/globals.css";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
+import { FinalEventAnnouncement } from "@/components/events/final-event-announcement";
 import { CursorTrail } from "@/components/motion/cursor-trail";
 import { SoundInteractions } from "@/components/motion/sound-interactions";
 import { siteCopy } from "@/content/site-copy";
@@ -69,6 +70,7 @@ export default function RootLayout({
         <div className="noise" aria-hidden="true" />
         <CursorTrail />
         <SoundInteractions />
+        <FinalEventAnnouncement />
         <Header />
         <main>{children}</main>
         <Footer />

@@ -129,6 +129,25 @@ const eventPresentation: Record<
 
 const eventDisplayOrder = ["push-tour-calima", "push-tour-pk-spot", "push-tour-raiz", "push-tour-mabuza"];
 
+const finalEventSchedule = [
+  {
+    time: "12:00–12:30",
+    title: "התכנסות ופתיחת האולם",
+    description: "קבלת פנים, היכרות, התארגנות והכנה משותפת לפתיחת אירוע הסיום."
+  },
+  {
+    time: "12:30–13:00",
+    title: "סדנת טריקים חדשים",
+    subtitle: "Floor, Bar & Parallel Bars Tricks",
+    description: "תרגילים וטריקים מרצפה, מתח ומקבילים."
+  },
+  {
+    time: "13:00–15:00",
+    title: "אימון פתוח + אתגרים זוכי פרסים מהקהילה",
+    bullets: ["Best Trick על מתח", "קומבו מקבילים", "הכרזת פרסי מצטייני המפגשים"]
+  }
+];
+
 export default function EventsPage() {
   const orderedEvents = eventDisplayOrder.flatMap((eventId) => events.filter((event) => event.id === eventId));
   const displayedEvents = [...orderedEvents, ...events.filter((event) => !eventDisplayOrder.includes(event.id))];
@@ -170,6 +189,65 @@ export default function EventsPage() {
 
       <AugustTourNotice />
 
+      <Section
+        id="final-event-schedule"
+        eyebrow="אירוע הסיום • לוח זמנים רשמי"
+        title="שלוש שעות. אולם אחד. כל הקהילה."
+        description="יום שישי, 28.8, ב־Calima ראשון לציון. שימו לב לשעה המעודכנת: האירוע מתחיל ב־12:00 ומסתיים ב־15:00."
+      >
+        <div className="grid gap-6 lg:grid-cols-[0.86fr_1.14fr] lg:items-start">
+          <Reveal>
+            <div className="overflow-hidden rounded-3xl border border-blood/45 bg-[#070707] p-2 shadow-[0_28px_110px_rgba(193,18,31,0.18)]">
+              <div className="relative aspect-[9/16] overflow-hidden rounded-[1.15rem]">
+                <Image
+                  src="/drive-assets/events-posters/calima-final-schedule.jpg"
+                  alt="הפוסטר הרשמי ולוח הזמנים של אירוע הסיום ב־Calima, ראשון לציון"
+                  fill
+                  priority
+                  sizes="(min-width: 1024px) 42vw, 100vw"
+                  className="object-contain"
+                />
+              </div>
+            </div>
+          </Reveal>
+
+          <div className="space-y-4">
+            <Reveal>
+              <div className="rounded-3xl border border-blood/45 bg-[linear-gradient(135deg,rgba(193,18,31,0.2),rgba(255,255,255,0.04))] p-6 sm:p-8">
+                <p className="text-sm font-black text-blood">הזמן המעודכן</p>
+                <p className="mt-2 text-4xl font-black text-white sm:text-6xl" dir="ltr">12:00–15:00</p>
+                <p className="mt-3 text-base font-bold text-zinc-200">הכשרת היישוב 10, ראשון לציון</p>
+              </div>
+            </Reveal>
+            {finalEventSchedule.map((item, index) => (
+              <Reveal key={item.time} delay={index * 0.05}>
+                <article className="motion-card grid gap-4 rounded-2xl border border-white/10 bg-white/[0.045] p-5 shadow-[0_18px_70px_rgba(0,0,0,0.28)] sm:grid-cols-[8rem_1fr] sm:p-6">
+                  <p className="text-xl font-black text-blood" dir="ltr">{item.time}</p>
+                  <div>
+                    <h3 className="text-xl font-black text-white">{item.title}</h3>
+                    {"subtitle" in item && item.subtitle && <p className="mt-2 text-sm font-black text-zinc-100" dir="ltr">{item.subtitle}</p>}
+                    {"description" in item && item.description && <p className="mt-2 text-sm font-medium leading-7 text-zinc-300">{item.description}</p>}
+                    {"bullets" in item && item.bullets && (
+                      <ul className="mt-3 grid gap-2 text-sm font-bold leading-6 text-zinc-200">
+                        {item.bullets.map((bullet) => <li key={bullet}>• {bullet}</li>)}
+                      </ul>
+                    )}
+                  </div>
+                </article>
+              </Reveal>
+            ))}
+            <Reveal delay={0.16}>
+              <div className="rounded-2xl border border-amber-300/35 bg-amber-300/10 p-5">
+                <p className="font-black text-amber-200">אחרי האירוע • 15:00–16:00</p>
+                <p className="mt-2 text-sm font-medium leading-7 text-zinc-200">אוכלים וחוגגים ביחד למי שנשאר.</p>
+                <p className="mt-1 text-sm font-medium leading-7 text-zinc-200">זהו זמן חופשי ואינו חלק משלוש שעות הפעילות הרשמיות.</p>
+              </div>
+            </Reveal>
+            <DiscountedTicketCta label="לרכישת כרטיס לאירוע הסיום" />
+          </div>
+        </div>
+      </Section>
+
       <Section>
         <div className="grid gap-4 md:grid-cols-3">
           {eventMoments.map((image, index) => (
@@ -205,7 +283,7 @@ export default function EventsPage() {
         </div>
       </Section>
 
-      <Section eyebrow="מה עושים שם?" title="מה באמת קורה בשעתיים האלה?" description="בלי סיבוכים ובלי קירות טקסט. מגיעים, זזים, לומדים, מכירים אנשים ויוצאים עם אנרגיה חדשה.">
+      <Section eyebrow="מה עושים שם?" title="מה באמת קורה באירועים?" description="בלי סיבוכים ובלי קירות טקסט. מגיעים, זזים, לומדים, מכירים אנשים ויוצאים עם אנרגיה חדשה.">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {meetingFlowItems.map((item, index) => (
             <Reveal key={item.title} delay={index * 0.04}>
