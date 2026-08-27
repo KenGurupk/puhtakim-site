@@ -4,11 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 
 import { checkoutConfig } from "@/lib/checkout-config";
 import type { CheckoutIntent } from "@/lib/checkout-intents";
+import { displayAnswer, formatRegistrationDate, healthQuestions } from "@/lib/registration-form";
 
 const openingTicketLimit = 15;
 
 type StatusFilter = "all" | "paid" | "pending_cash" | "cash_paid";
-type MissingFilter = "all" | "missing_health" | "missing_terms";
+type MissingFilter = "all" | "missing_health" | "missing_terms" | "medical_review";
 type SourceFilter = "all" | "Website Purchase" | "Manual Check-in" | "Cash / Walk-in" | "Missing Forms Completion";
 
 function formatCurrency(value: number) {
@@ -213,6 +214,8 @@ export function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
   const [updatingReference, setUpdatingReference] = useState<string | null>(null);
+  const [selectedIntent, setSelectedIntent] = useState<CheckoutIntent | null>(null);
+  const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function loadPurchases() {
@@ -254,7 +257,9 @@ export function AdminDashboard() {
         missingFilter === "all" ||
         (missingFilter === "missing_health"
           ? intent.compliance?.healthDeclarationCompleted !== true
-          : intent.compliance?.termsAccepted !== true);
+          : missingFilter === "missing_terms"
+            ? intent.compliance?.termsAccepted !== true
+            : intent.compliance?.healthDeclarationStatus === "medical-review-required");
       const matchesSource = sourceFilter === "all" || registrationSource(intent) === sourceFilter;
 
       return matchesQuery && matchesEvent && matchesStatus && matchesMissing && matchesSource;
@@ -304,7 +309,8 @@ export function AdminDashboard() {
     URL.revokeObjectURL(url);
   }
 
-  async function exportXlsx() {
+  async function exportXlsx(full = false) {
+    if (full && !window.confirm("הקובץ מכיל מידע אישי ורפואי רגיש. להמשיך בהורדה?")) return;
     setIsExporting(true);
 
     try {
@@ -315,6 +321,7 @@ export function AdminDashboard() {
         missing: missingFilter,
         source: sourceFilter
       });
+      if (full) params.set("full", "true");
       const response = await fetch(`/api/admin/event-checkin-export?${params.toString()}`, { cache: "no-store" });
 
       if (!response.ok) {
@@ -325,7 +332,7 @@ export function AdminDashboard() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `pushtakim-updated-event-list-${new Date().toISOString().slice(0, 10)}.xlsx`;
+      link.download = `pushtakim-${full ? "full-registration-forms" : "updated-event-list"}-${new Date().toISOString().slice(0, 10)}.xlsx`;
       link.click();
       URL.revokeObjectURL(url);
       setError(null);
@@ -333,6 +340,21 @@ export function AdminDashboard() {
       setError(exportError instanceof Error ? exportError.message : "לא הצלחנו לייצא את הקובץ.");
     } finally {
       setIsExporting(false);
+    }
+  }
+
+  async function viewForm(checkoutReference: string) {
+    setIsLoadingDetails(true);
+    try {
+      const response = await fetch(`/api/admin/purchases/${encodeURIComponent(checkoutReference)}`, { cache: "no-store" });
+      const payload = (await response.json().catch(() => null)) as { purchase?: CheckoutIntent; error?: string } | null;
+      if (!response.ok || !payload?.purchase) throw new Error(payload?.error ?? "לא הצלחנו לטעון את הטופס.");
+      setSelectedIntent(payload.purchase);
+      setError(null);
+    } catch (detailsError) {
+      setError(detailsError instanceof Error ? detailsError.message : "לא הצלחנו לטעון את הטופס.");
+    } finally {
+      setIsLoadingDetails(false);
     }
   }
 
@@ -392,11 +414,14 @@ export function AdminDashboard() {
             </button>
             <button
               type="button"
-              onClick={exportXlsx}
+              onClick={() => exportXlsx(false)}
               disabled={isExporting}
               className="inline-flex min-h-12 items-center justify-center rounded-2xl bg-blood px-5 py-3 text-sm font-black text-white shadow-[0_18px_70px_rgba(193,18,31,0.24)] transition hover:bg-white hover:text-black disabled:cursor-wait disabled:opacity-70"
             >
               {isExporting ? "מייצאים..." : "ייצוא רשימת אירוע מעודכנת"}
+            </button>
+            <button type="button" onClick={() => exportXlsx(true)} disabled={isExporting} className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-amber-300/40 bg-amber-300/10 px-5 py-3 text-sm font-black text-amber-100 transition hover:bg-amber-300 hover:text-black disabled:opacity-70">
+              ייצוא טפסים מלא (רגיש)
             </button>
           </div>
         </div>
@@ -443,7 +468,8 @@ export function AdminDashboard() {
               options={[
                 ["all", "הכל"],
                 ["missing_health", "חסרה הצהרת בריאות"],
-                ["missing_terms", "חסרים תנאים"]
+                ["missing_terms", "חסרים תנאים"],
+                ["medical_review", "נדרש בירור רפואי"]
               ]}
             />
             <Select
@@ -464,7 +490,7 @@ export function AdminDashboard() {
           {error && <StatusNotice text={error} tone="error" />}
         </div>
 
-        <AdminTable title="רכישות והרשמות" intents={filteredIntents} onMarkCashPaid={markCashPaid} updatingReference={updatingReference} />
+        <AdminTable title="רכישות והרשמות" intents={filteredIntents} onMarkCashPaid={markCashPaid} onViewForm={viewForm} updatingReference={updatingReference} isLoadingDetails={isLoadingDetails} />
 
         <section className="mt-8 rounded-2xl border border-amber-300/24 bg-[linear-gradient(145deg,rgba(245,158,11,0.11),rgba(255,255,255,0.045)_52%,rgba(193,18,31,0.1))] p-5 shadow-[0_24px_90px_rgba(245,158,11,0.11)] sm:p-6">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
@@ -479,9 +505,10 @@ export function AdminDashboard() {
               {manualCheckins.length} רשומות מוצגות
             </p>
           </div>
-          <AdminTable intents={manualCheckins} compact onMarkCashPaid={markCashPaid} updatingReference={updatingReference} />
+          <AdminTable intents={manualCheckins} compact onMarkCashPaid={markCashPaid} onViewForm={viewForm} updatingReference={updatingReference} isLoadingDetails={isLoadingDetails} />
         </section>
       </div>
+      {selectedIntent && <RegistrationFormDialog intent={selectedIntent} onClose={() => setSelectedIntent(null)} />}
     </section>
   );
 }
@@ -491,12 +518,16 @@ function AdminTable({
   intents,
   compact,
   onMarkCashPaid,
+  onViewForm,
+  isLoadingDetails,
   updatingReference
 }: {
   title?: string;
   intents: CheckoutIntent[];
   compact?: boolean;
   onMarkCashPaid: (checkoutReference: string) => void;
+  onViewForm: (checkoutReference: string) => void;
+  isLoadingDetails: boolean;
   updatingReference: string | null;
 }) {
   return (
@@ -543,6 +574,9 @@ function AdminTable({
               <td className="px-4 py-4">{formatDate(intent.createdAt)}</td>
               <td className="px-4 py-4">{intent.notes || "אין"}</td>
               <td className="rounded-l-2xl px-4 py-4">
+                <button type="button" onClick={() => onViewForm(intent.checkoutReference)} disabled={isLoadingDetails} className="mb-2 inline-flex min-h-10 items-center justify-center rounded-xl border border-white/20 px-4 py-2 text-xs font-black text-white transition hover:bg-white hover:text-black disabled:opacity-60">
+                  צפייה בטופס
+                </button>
                 {intent.status === "pending_cash" ? (
                   <button
                     type="button"
@@ -567,6 +601,34 @@ function AdminTable({
       )}
     </div>
   );
+}
+
+function RegistrationFormDialog({ intent, onClose }: { intent: CheckoutIntent; onClose: () => void }) {
+  const compliance = intent.compliance;
+  const status = compliance?.healthDeclarationStatus === "medical-review-required" ? "נדרש בירור רפואי" : compliance?.healthDeclarationCompleted ? "הושלמה" : "חסרה";
+  return (
+    <div className="fixed inset-0 z-[1000] overflow-y-auto bg-black/85 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="טופס הרשמה מלא">
+      <div className="mx-auto my-6 max-w-4xl rounded-3xl border border-white/15 bg-zinc-950 p-5 text-white shadow-2xl sm:p-8">
+        <div className="flex items-start justify-between gap-4 border-b border-white/10 pb-5">
+          <div><p className="text-sm font-black text-blood">מידע אישי ורפואי רגיש</p><h2 className="mt-2 text-3xl font-black">הטופס של {intent.fullName}</h2><p className="mt-2 text-sm text-zinc-400">{intent.checkoutReference} · {formatRegistrationDate(intent.createdAt)}</p></div>
+          <button type="button" onClick={onClose} className="rounded-xl border border-white/20 px-4 py-2 font-black">סגירה</button>
+        </div>
+        <div className="mt-6 grid gap-6">
+          <DetailSection title="פרטי הרשמה"><p>{intent.fullName} · {intent.phone} · {intent.email}</p><p>תאריך לידה: {intent.dateOfBirth || "לא הוזן"}</p><p>כרטיס: {intent.ticketName}</p><p>אירועים: {eventLabel(intent)}</p><p>סטטוס תשלום: {paymentStatus(intent)}</p></DetailSection>
+          <DetailSection title={`הצהרת בריאות — ${status}`} warning={compliance?.healthDeclarationStatus === "medical-review-required"}>
+            <p>גרסה: {compliance?.healthDeclarationVersion || "לא הוזן"} · אושר: {formatRegistrationDate(compliance?.healthDeclarationAcceptedAt)}</p>
+            <div className="mt-4 grid gap-3">{healthQuestions.map((question, index) => <div key={question} className="rounded-xl border border-white/10 bg-black/30 p-4"><p className="font-bold">{index + 1}. {question}</p><p className={`mt-2 font-black ${compliance?.healthAnswers?.[`q${index + 1}`] === "yes" ? "text-amber-300" : "text-emerald-300"}`}>{displayAnswer(compliance?.healthAnswers?.[`q${index + 1}`])}</p></div>)}</div>
+          </DetailSection>
+          <DetailSection title="תנאים ואישורים"><p>המסמך נקרא: {displayAnswer(compliance?.termsDocumentRead)}</p><p>התנאים אושרו: {displayAnswer(compliance?.termsAccepted)}</p><p>גרסה: {compliance?.termsVersion || "לא הוזן"} · אושר: {formatRegistrationDate(compliance?.termsAcceptedAt)}</p><p>אישור צילום: {compliance?.photoConsent || "לא הוזן"}</p></DetailSection>
+          {compliance?.isMinor && <DetailSection title="הורה / אפוטרופוס"><p>אישור: {displayAnswer(compliance.guardianConsent)}</p><p>{compliance.guardianName || "לא הוזן"} · {compliance.guardianPhone || "לא הוזן"}</p></DetailSection>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DetailSection({ title, warning, children }: { title: string; warning?: boolean; children: React.ReactNode }) {
+  return <section className={`rounded-2xl border p-5 text-sm font-bold leading-7 ${warning ? "border-amber-300/50 bg-amber-300/10" : "border-white/10 bg-white/[0.04]"}`}><h3 className="mb-3 text-xl font-black">{title}</h3>{children}</section>;
 }
 
 function MetricCard({ label, value, detail }: { label: string; value: string; detail?: string }) {
