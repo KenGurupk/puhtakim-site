@@ -38,7 +38,9 @@ const tourEvents: CheckoutEvent[] = siteCopy.home.tourStops.map((event) => ({
 }));
 
 const openingEvent = tourEvents[0];
-const remainingTourEvents = tourEvents.filter((event) => event.id !== openingEvent?.id);
+const remainingTourEvents = tourEvents
+  .filter((event) => event.id !== openingEvent?.id)
+  .sort((a, b) => (a.id === "push-tour-calima" ? -1 : b.id === "push-tour-calima" ? 1 : 0));
 
 export const checkoutConfig = {
   paymentProvider: "grow",
@@ -95,7 +97,8 @@ export const checkoutConfig = {
       salesClosed: true,
       selectionMode: "triple",
       requiredEventCount: 3,
-      ctaId: "three-halls"
+      ctaId: "three-halls",
+      note: "אירועי הטור הקודמים הסתיימו."
     },
     {
       type: "full",
