@@ -1,5 +1,4 @@
 import { PricingFaq } from "@/components/home/pricing-faq";
-import { TicketPlanCard } from "@/components/home/ticket-plan-card";
 import { Reveal } from "@/components/motion/reveal";
 import { siteCopy } from "@/content/site-copy";
 
@@ -15,7 +14,6 @@ type PushTourPricingProps = {
 
 export function PushTourPricing({ title, subtitle, question, valueLine, showFaq = true }: PushTourPricingProps = {}) {
   const questionText = question === undefined ? pricing.question : question;
-  const availablePlans = pricing.plans.filter((plan) => plan.id === "calima-single");
 
   return (
     <section id="tickets" className="relative isolate overflow-hidden border-b border-white/10 bg-black px-5 py-24 sm:px-8 sm:py-32 lg:py-40">
@@ -23,14 +21,12 @@ export function PushTourPricing({ title, subtitle, question, valueLine, showFaq 
       <div className="mx-auto max-w-7xl">
         <Reveal>
           <div className="max-w-4xl">
-            <p className="text-sm font-black uppercase tracking-[0.28em] text-blood">
-              PUSH TOUR 2026
-            </p>
+            <p className="text-sm font-black uppercase tracking-[0.28em] text-blood">PUSH TOUR 2026</p>
             <h2 className="mt-6 whitespace-pre-line text-4xl font-black leading-tight text-white sm:text-6xl lg:text-7xl">
-              {title ?? pricing.title}
+              {title ?? "Push Tour 2026 הסתיים ❤️‍🔥"}
             </h2>
             <p className="mt-7 max-w-3xl text-lg font-medium leading-8 text-zinc-300 sm:text-xl">
-              {subtitle ?? pricing.subtitle}
+              {subtitle ?? "ארבעה אולמות, קהילות מכל הארץ והמון רגעים שניקח איתנו הלאה. מכירת הכרטיסים לסבב הסתיימה."}
             </p>
             {valueLine && (
               <p className="mt-5 max-w-3xl rounded-2xl border border-blood/35 bg-blood/10 px-5 py-4 text-base font-black leading-7 text-white shadow-[0_20px_80px_rgba(193,18,31,0.12)]">
@@ -42,66 +38,18 @@ export function PushTourPricing({ title, subtitle, question, valueLine, showFaq 
 
         {questionText && (
           <Reveal delay={0.08}>
-            <p className="mt-16 text-center text-3xl font-black tracking-tight text-white sm:text-5xl">
-              {questionText}
-            </p>
+            <p className="mt-16 text-center text-3xl font-black tracking-tight text-white sm:text-5xl">{questionText}</p>
           </Reveal>
         )}
 
-        <div id="available-ticket-options" className="bundle-choice-grid mt-12 grid gap-5 md:grid-cols-2 md:items-stretch">
-          {availablePlans.map((plan, index) => {
-            const role = "אירוע הסיום";
-            const availability = undefined;
-
-            return (
-              <Reveal key={plan.id} delay={index * 0.09} className="h-full">
-                <TicketPlanCard
-                  plan={plan}
-                  role={role}
-                  availability={availability}
-                  emphasis="standard"
-                />
-              </Reveal>
-            );
-          })}
-        </div>
-
-        <Reveal delay={0.12}>
-          <div className="mt-14 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] shadow-[0_20px_80px_rgba(0,0,0,0.32)]">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[44rem] border-collapse text-right">
-                <thead>
-                  <tr className="border-b border-white/10 bg-white/[0.025]">
-                    <th className="px-6 py-6 text-sm font-black text-blood">מה מתאים לכם?</th>
-                    {pricing.comparison.columns.map((column) => (
-                      <th key={column} className="px-6 py-6 text-sm font-black text-white">
-                        {column}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {pricing.comparison.rows.map((row) => (
-                    <tr key={row.label} className="border-b border-white/10 transition duration-300 hover:bg-white/[0.045] last:border-b-0">
-                      <td className="px-6 py-5 text-sm font-black text-zinc-300">
-                        <span className="ml-2 inline-block size-1.5 rounded-full bg-blood align-middle" aria-hidden="true" />
-                        {row.label}
-                      </td>
-                      {row.values.map((value, index) => (
-                        <td
-                          key={`${row.label}-${index}`}
-                          className={`px-6 py-5 text-sm font-bold ${
-                            index === 2 ? "text-amber-200" : "text-white/82"
-                          }`}
-                        >
-                          {value}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+        <Reveal delay={0.1}>
+          <div className="mt-12 max-w-4xl rounded-3xl border border-white/12 bg-white/[0.045] p-7 shadow-[0_24px_90px_rgba(0,0,0,0.34)] sm:p-9">
+            <p className="text-sm font-black tracking-[0.14em] text-blood">ההרשמה נסגרה</p>
+            <h3 className="mt-4 text-3xl font-black leading-tight text-white sm:text-5xl">כל אירועי Push Tour 2026 הסתיימו.</h3>
+            <p className="mt-5 max-w-3xl text-base font-bold leading-8 text-zinc-300 sm:text-lg">
+              תודה ענקית לכל מי שהתאמן, התחרה, עזר, צילם, הרים, אירח, נתן חסות ופשוט היה חלק מהמסע הזה. אין כרגע כרטיסים פעילים לרכישה באתר.
+            </p>
+            <p className="mt-4 text-base font-black leading-7 text-amber-200">אנחנו רק מתחממים. האירוע הבא כבר בדרך.</p>
           </div>
         </Reveal>
 
