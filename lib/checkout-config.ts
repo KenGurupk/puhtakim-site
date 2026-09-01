@@ -1,6 +1,6 @@
 import { siteCopy } from "@/content/site-copy";
 
-export type CheckoutTicketType = "opening" | "beer-sheva-special" | "single" | "triple" | "full";
+export type CheckoutTicketType = "opening" | "beer-sheva-special" | "single" | "triple" | "full" | "dubnov-kids";
 
 export type CheckoutEvent = {
   id: string;
