@@ -51,6 +51,14 @@ export type CheckoutIntent = CheckoutIntentCustomer & {
   paymentVerifiedAt?: string;
   paymentMatchMethod?: string;
   inventoryHoldExpiresAt?: string;
+  productType?: "event_ticket" | "dubnov_kids_class";
+  classPlan?: "monthly" | "trial" | "single";
+  classMonth?: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  medicalNotes?: string;
+  registrationNotificationSentAt?: string;
+  statusAccessToken?: string;
   compliance?: CheckoutCompliance;
   sourcePage?: string;
   ctaId?: string;
