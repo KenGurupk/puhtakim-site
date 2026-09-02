@@ -4,7 +4,6 @@ import { Noto_Sans_Hebrew } from "next/font/google";
 import "@/app/globals.css";
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
-import { FinalEventAnnouncement } from "@/components/events/final-event-announcement";
 import { CursorTrail } from "@/components/motion/cursor-trail";
 import { SoundInteractions } from "@/components/motion/sound-interactions";
 import { siteCopy } from "@/content/site-copy";
@@ -29,48 +28,22 @@ const organizationStructuredData = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: {
-    default: "PushTakim",
-    template: "%s | PushTakim"
-  },
+  title: { default: "PushTakim", template: "%s | PushTakim" },
   description: siteCopy.metadata.defaultDescription,
   applicationName: "PushTakim",
-  icons: {
-    icon: "/icon.png",
-    shortcut: "/icon.png",
-    apple: "/icon.png"
-  },
-  openGraph: {
-    title: "PushTakim",
-    description: siteCopy.metadata.openGraphDescription,
-    url: siteUrl,
-    siteName: "PushTakim",
-    locale: "he_IL",
-    type: "website"
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "PushTakim",
-    description: siteCopy.metadata.openGraphDescription
-  }
+  icons: { icon: "/icon.png", shortcut: "/icon.png", apple: "/icon.png" },
+  openGraph: { title: "PushTakim", description: siteCopy.metadata.openGraphDescription, url: siteUrl, siteName: "PushTakim", locale: "he_IL", type: "website" },
+  twitter: { card: "summary_large_image", title: "PushTakim", description: siteCopy.metadata.openGraphDescription }
 };
 
-export default function RootLayout({
-  children
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="he" dir="rtl" className={notoSansHebrew.variable}>
       <body className="font-sans antialiased">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationStructuredData) }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationStructuredData) }} />
         <div className="noise" aria-hidden="true" />
         <CursorTrail />
         <SoundInteractions />
-        <FinalEventAnnouncement />
         <Header />
         <main>{children}</main>
         <Footer />
