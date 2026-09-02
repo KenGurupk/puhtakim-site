@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import type { FormEvent, ReactNode } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getUtmParams } from "@/lib/checkout-intents";
 import { dubnovKidsConfig, type DubnovKidsPlan } from "@/lib/dubnov-kids";
 import { healthQuestions } from "@/lib/registration-form";
@@ -46,5 +47,5 @@ export function DubnovKidsRegistration() {
     </form></div></main>;
 }
 
-function Card({title,subtitle,children}:{title:string;subtitle?:string;children:React.ReactNode}){return <section className="rounded-[2rem] border border-white/10 bg-zinc-950 p-5 sm:p-8"><h2 className="text-3xl font-black">{title}</h2>{subtitle&&<p className="mt-2 font-bold leading-7 text-zinc-400">{subtitle}</p>}<div className="mt-5">{children}</div></section>}
+function Card({title,subtitle,children}:{title:string;subtitle?:string;children:ReactNode}){return <section className="rounded-[2rem] border border-white/10 bg-zinc-950 p-5 sm:p-8"><h2 className="text-3xl font-black">{title}</h2>{subtitle&&<p className="mt-2 font-bold leading-7 text-zinc-400">{subtitle}</p>}<div className="mt-5">{children}</div></section>}
 function Fields(){const input="min-h-12 rounded-2xl border border-white/15 bg-black px-4 py-3 font-bold outline-none focus:border-blood";return <div className="grid gap-4 sm:grid-cols-2"><label className="grid gap-2 font-black">שם הילד/ה<input required name="fullName" className={input}/></label><label className="grid gap-2 font-black">תאריך לידה<input required type="date" name="dateOfBirth" className={input}/></label><label className="grid gap-2 font-black">שם הורה / אפוטרופוס<input required name="guardianName" className={input}/></label><label className="grid gap-2 font-black">טלפון הורה<input required type="tel" name="guardianPhone" className={input}/></label><label className="grid gap-2 font-black">טלפון ליצירת קשר<input required type="tel" name="phone" className={input}/></label><label className="grid gap-2 font-black">אימייל<input required type="email" name="email" className={input}/></label><label className="grid gap-2 font-black">איש קשר לחירום<input required name="emergencyContactName" className={input}/></label><label className="grid gap-2 font-black">טלפון חירום<input required type="tel" name="emergencyContactPhone" className={input}/></label></div>}
