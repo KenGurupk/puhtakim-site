@@ -78,14 +78,16 @@ export const checkoutConfig = {
     {
       type: "single",
       planId: "calima-single",
-      name: "כרטיס ראשון לציון / Calima",
+      name: "כרטיס ראשון לציון / Calima - סגור",
       price: 200,
       priceLabel: "200₪",
-      growUrl: "https://pay.grow.link/MTAzMDM2~d4d4ec74c912f0b39e809eb04a0ec5f4-MzY4NTI4MA",
+      growUrl: "",
+      salesClosed: true,
       selectionMode: "fixed",
       fixedEventIds: ["push-tour-calima"],
       requiredEventCount: 1,
-      ctaId: "calima-single"
+      ctaId: "calima-single",
+      note: "Push Tour 2026 הסתיים. תודה לכל מי שלקח חלק במסע."
     },
     {
       type: "triple",
@@ -110,7 +112,8 @@ export const checkoutConfig = {
       salesClosed: true,
       selectionMode: "all",
       requiredEventCount: 4,
-      ctaId: "ultimate"
+      ctaId: "ultimate",
+      note: "Push Tour 2026 הסתיים."
     }
   ] satisfies CheckoutTicket[]
 } as const;
