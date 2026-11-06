@@ -11,7 +11,12 @@ const headers = { "Cache-Control": "private, no-store", "Referrer-Policy": "no-r
 export async function POST(request: Request) {
   if (!getCentralStorageStatus().configured || !getGrowQuickPaymentConfig()) return NextResponse.json({ error: "התשלום המהיר עדיין אינו זמין. פנו לקן־גורו." }, { status: 503, headers });
   const origin = request.headers.get("origin");
-  if (origin && origin !== new URL(request.url).origin) return NextResponse.json({ error: "בקשה לא מורשית." }, { status: 403, headers });
+  if (origin) {
+    try {
+      // Next may use an internal HTTP origin behind a proxy; compare against the actual HTTP Host.
+      if (new URL(origin).host !== (request.headers.get("host") || new URL(request.url).host)) return NextResponse.json({ error: "בקשה לא מורשית." }, { status: 403, headers });
+    } catch { return NextResponse.json({ error: "בקשה לא מורשית." }, { status: 403, headers }); }
+  }
   try {
     const clientIp = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
     if (!await quickPaymentRateLimit("checkout:" + clientIp)) return NextResponse.json({ error: "יותר מדי ניסיונות. נסו שוב בעוד כמה דקות." }, { status: 429, headers });
@@ -56,10 +61,11 @@ export async function POST(request: Request) {
         const payment = await createGrowQuickPayment(record, original.compliance?.guardianName || "", privateData.callbackKey);
         await saveQuickPaymentPrivate(checkoutReference, { ...privateData, state: "ready", paymentUrl: payment.url, processId: payment.processId, processToken: payment.processToken, paymentUrlExpiresAt: new Date(Date.now() + 9 * 60 * 1000).toISOString() });
         return NextResponse.json({ checkoutReference, statusAccessToken, paymentUrl: payment.url, amount: quote.total }, { headers });
-      } catch {
+      } catch (error) {
+        const code = error instanceof Error && ["GROW_REQUEST_FAILED", "GROW_INVALID_RESPONSE", "GROW_QUICK_PAYMENT_NOT_CONFIGURED", "QUICK_PAYMENT_AMOUNT_MISMATCH"].includes(error.message) ? error.message : "GROW_CREATE_UNAVAILABLE";
         // A network timeout may occur after Grow has created a process. Do not retry creating it silently.
         await saveQuickPaymentPrivate(checkoutReference, { ...privateData, state: "unknown" });
-        return NextResponse.json({ error: "לא הצלחנו לפתוח את התשלום. לא התקבל אישור תשלום. נסו שוב מאוחר יותר או פנו לקן־גורו." }, { status: 502, headers });
+        return NextResponse.json({ error: "לא הצלחנו לפתוח את התשלום. לא התקבל אישור תשלום. נסו שוב מאוחר יותר או פנו לקן־גורו.", code }, { status: 502, headers });
       }
     });
   } catch {

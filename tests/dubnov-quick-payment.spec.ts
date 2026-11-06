@@ -75,7 +75,7 @@ test("synthetic Doron: three October sessions are 270 ILS, with no repeat questi
   const created = page.waitForResponse(r => r.url().endsWith("/api/classes/dubnov-kids/quick-payment") && r.request().method() === "POST");
   await page.getByRole("button", { name: "לתשלום מאובטח ב־Grow · 270 ₪" }).click();
   const createdResponse = await created, body = await createdResponse.json();
-  expect(createdResponse.ok()).toBeTruthy();
+  expect(createdResponse.status(), String(body.error || "") + " " + String(body.code || "")).toBe(200);
   await page.waitForURL("https://sandboxapi.grow.link/payment/**");
   await expect(page.locator("body")).toContainText("270 ILS");
   const provider = await (await request.get(fixture + "/__test__/process/1")).json();
