@@ -178,10 +178,14 @@ test("synthetic Doron: three October sessions are 270 ILS, with no repeat questi
   expect(adminPurchases.purchases.find((p: { checkoutReference: string }) => p.checkoutReference === reference).statusAccessToken).toBeUndefined();
 
   await context.addCookies([{ name: "pt_admin_session", value: cookieValue, domain: "127.0.0.1", path: "/", secure: false, httpOnly: true }]);
+  const adminLoaded = page.waitForResponse(r => r.url().endsWith("/api/admin/purchases"));
   await page.goto("/admin");
+  expect((await adminLoaded).status()).toBe(200);
   await page.getByLabel("חודש למעקב").fill("2026-10");
+  await expect(page.getByLabel("חודש למעקב")).toHaveValue("2026-10");
+  await expect(page.getByRole("button", { name: "צפייה בטופס ובעדכון" })).toHaveCount(2);
   await expect(page.getByRole("heading", { name: "דובנוב — תשלומים מהירים" })).toBeVisible();
-  await expect(page.getByRole("cell", { name: "90 ₪ × 3 = 270 ₪" })).toHaveCount(2);
+  await expect(page.getByRole("cell").filter({ hasText: /90\s*₪\s*×\s*3\s*=\s*270\s*₪/ })).toHaveCount(2);
   await page.getByRole("button", { name: "צפייה בטופס ובעדכון" }).first().click();
   await expect(page.getByText(healthMarker, { exact: true })).toBeVisible();
   // Existing monthly renewal remains the same redirect.
