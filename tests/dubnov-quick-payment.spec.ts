@@ -59,6 +59,14 @@ test("synthetic Doron: three October sessions are 270 ILS, with no repeat questi
   expect(incomplete.ok()).toBeTruthy();
   expect((await request.post("/api/classes/dubnov-kids/quick-payment", { data: { ...validInput(), childName: "ילד ללא שאלון" } })).status()).toBe(400);
 
+  const capturedResponses: Array<{ body: Record<string, unknown>; input: Record<string, unknown> }> = [];
+  // Capture the actual server response before the browser leaves this origin.
+  // CDP response bodies can disappear during a cross-origin payment redirect.
+  await page.route("**/api/classes/dubnov-kids/quick-payment", async route => {
+    const response = await route.fetch();
+    capturedResponses.push({ body: await response.json(), input: route.request().postDataJSON() });
+    await route.fulfill({ response });
+  });
   await page.route("https://sandboxapi.grow.link/payment/**", async route => {
     const id = new URL(route.request().url()).pathname.split("/").pop();
     const providerProcess = await (await request.get(fixture + "/__test__/process/" + id)).json();
@@ -74,7 +82,7 @@ test("synthetic Doron: three October sessions are 270 ILS, with no repeat questi
   await page.getByLabel("אני מאשר/ת שלא חל שינוי במידע הבריאותי שנמסר בהרשמה.").check();
   const created = page.waitForResponse(r => r.url().endsWith("/api/classes/dubnov-kids/quick-payment") && r.request().method() === "POST");
   await page.getByRole("button", { name: "לתשלום מאובטח ב־Grow · 270 ₪" }).click();
-  const createdResponse = await created, body = await createdResponse.json();
+  const createdResponse = await created, body = capturedResponses[capturedResponses.length - 1].body;
   expect(createdResponse.status(), String(body.error || "") + " " + String(body.code || "")).toBe(200);
   await page.waitForURL("https://sandboxapi.grow.link/payment/**");
   await expect(page.locator("body")).toContainText("270 ILS");
@@ -98,7 +106,7 @@ test("synthetic Doron: three October sessions are 270 ILS, with no repeat questi
   expect(JSON.parse(payment.healthAnswers)).toEqual({});
 
   // Browser-supplied prices cannot change the sum, and a double submit reuses the same process.
-  const submitted = createdResponse.request().postDataJSON();
+  const submitted = capturedResponses[0].input;
   const replay = await request.post("/api/classes/dubnov-kids/quick-payment", { data: { ...submitted, price: 1, amount: 1, unitPrice: 1 } });
   expect(replay.ok()).toBeTruthy();
   expect((await replay.json()).checkoutReference).toBe(reference);
@@ -144,13 +152,14 @@ test("synthetic Doron: three October sessions are 270 ILS, with no repeat questi
   await page.getByLabel("אני מאשר/ת שהעדכון הבריאותי שמסרתי נכון ומלא.").check();
   const updateResponse = page.waitForResponse(r => r.url().endsWith("/api/classes/dubnov-kids/quick-payment") && r.request().method() === "POST");
   await page.getByRole("button", { name: "לתשלום מאובטח ב־Grow · 270 ₪" }).click();
-  const updated = await (await updateResponse).json();
+  await updateResponse;
+  const updated = capturedResponses[capturedResponses.length - 1].body;
   await page.waitForURL("https://sandboxapi.grow.link/payment/**");
-  expect((await rawRecord(request, updated.checkoutReference)).status).toBe("pending_payment");
+  expect((await rawRecord(request, String(updated.checkoutReference))).status).toBe("pending_payment");
   expect(await rawRecord(request, rootReference)).toEqual(original);
   const secondProvider = await (await request.get(fixture + "/__test__/process/2")).json();
   expect(JSON.stringify(secondProvider.form)).not.toContain(healthMarker);
-  expect((await request.get("/api/admin/dubnov-kids/quick-payments/" + updated.checkoutReference)).status()).toBe(401);
+  expect((await request.get("/api/admin/dubnov-kids/quick-payments/" + String(updated.checkoutReference))).status()).toBe(401);
   const publicStatus = await request.get("/api/classes/dubnov-kids/quick-payment/status/" + reference, { headers: { Authorization: "Bearer " + body.statusAccessToken } });
   expect(publicStatus.ok()).toBeTruthy();expect(await publicStatus.text()).not.toContain(healthMarker);
   expect((await request.get("/api/classes/dubnov-kids/quick-payment/status/" + reference)).status()).toBe(401);
@@ -158,7 +167,7 @@ test("synthetic Doron: three October sessions are 270 ILS, with no repeat questi
   const login = await request.post("/api/admin/login", { form: { username: "fixture-admin", password: "fixture-password" }, maxRedirects: 0 });
   expect(login.status()).toBe(303);
   const cookie = login.headers()["set-cookie"].split(";")[0], cookieValue = cookie.slice(cookie.indexOf("=") + 1);
-  const health = await request.get("/api/admin/dubnov-kids/quick-payments/" + updated.checkoutReference, { headers: { Cookie: cookie } });
+  const health = await request.get("/api/admin/dubnov-kids/quick-payments/" + String(updated.checkoutReference), { headers: { Cookie: cookie } });
   expect(health.headers()["cache-control"]).toContain("no-store");
   const healthData = await health.json();
   expect(healthData.healthUpdate).toBe(healthMarker);
