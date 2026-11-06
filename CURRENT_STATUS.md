@@ -88,3 +88,7 @@ See ROADMAP.md.
 Current Operating Rule
 
 Protect existing data first. Fix urgent event operations second. Build new things third.
+
+November 2026 — Dubnov quick payments
+
+A separate existing-family, per-session payment route is being prepared on a feature branch. It links to the original declaration, keeps health updates private, and uses a server-created Grow process at 90 ILS per session. Existing registration and monthly-renewal routes are retained. Activation requires the merchant's Grow Light API configuration and a real sandbox payment/receipt check; see docs/dubnov-quick-payment.md.
