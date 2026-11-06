@@ -7,6 +7,8 @@ This adds a separate /classes/dubnov-kids/quick-payment route. The first-registr
 Configure these server-side variables in the existing Vercel project, in the intended environment:
 
 - GROW_API_ORIGIN: the exact HTTPS API origin supplied by Grow for this merchant. No production endpoint is inferred from the existing pay.grow.link links.
+- GROW_PAYMENT_MODE: explicitly set to sandbox for verification. Sandbox mode accepts only Grow's documented sandbox API/payment hosts and rejects a live hosted payment URL. Do not set live or activate real payments before presenting the verification report to the owner.
+- GROW_CALLBACK_ORIGIN: the actual external HTTPS origin of the isolated Preview deployment receiving success, cancellation, payment and invoice callbacks. Sandbox mode rejects callbacks to pushtakim.co.il or www.pushtakim.co.il; it must not write test records into the production database.
 - GROW_USER_ID and GROW_PAGE_CODE: merchant-specific Light API identifiers issued/authorized by Grow. Do not use documentation examples or copy identifiers from a public payment-link URL.
 - GROW_VAT_TYPE: 1 for prices including VAT, or 3 for a tax-exempt merchant; confirm the business's actual invoice setting. The final customer price stays 90 ILS per session.
 - GROW_QUICK_PAYMENT_ENABLED=true only after confirming that this account's hosted payment page freezes the API-set sum and copies productData into the receipt.
@@ -39,7 +41,7 @@ Open /admin, sign in, then use the דובנוב — תשלומים מהירים 
 
 ## Verification
 
-The quick-payment Playwright suite exercises a synthetic Doron registration with three sessions in October 2026, totaling 270 ILS, plus browser price tampering, incomplete registration, a health update, callback spoofing, amount mismatch, duplicate callbacks, receipt association, idempotency and admin access. It runs against the real app and a disposable Redis, with a test-only Grow HTTP adapter.
+The quick-payment Playwright suite exercises a synthetic Doron registration with three sessions in October 2026, totaling 270 ILS, plus browser price tampering, incomplete registration, a health update, callback spoofing, amount mismatch, duplicate callbacks, receipt association, idempotency and admin access. It also checks that sandbox mode cannot open a live payment page or use production callbacks. It runs against the real app and a disposable Redis, with a test-only Grow HTTP adapter.
 
 These integration tests do not constitute a transaction with the real merchant. Before production activation, use the merchant's actual Grow sandbox credentials to open the payment page for 270 ILS and inspect the generated receipt text. Then verify the registered child record with the authorized administrator; do not create a real charge without the parent's participation.
 
@@ -50,4 +52,6 @@ API contract references:
 - https://developers.grow.business/reference/approve-transaction-1
 - https://developers.grow.business/reference/invoice-server-response
 
-During implementation the contract was read from the June 2026 snapshot at https://github.com/Shaharamir/grow-payments-mcp (an unofficial mirror). Production details must be confirmed against Grow's official documentation and the merchant's assigned configuration.
+The initial contract was read from the June 2026 snapshot at https://github.com/Shaharamir/grow-payments-mcp (an unofficial mirror). On November 6, 2026, the create-payment-process and invoice-server-response contracts were also checked directly against the official URLs above. This verifies the request/callback schema, not the merchant's API permissions, credentials, hosted-page behavior or receipt template.
+
+The PR remains a draft. No production merge, live payment activation or real charge is authorized until the owner has reviewed what was verified and what remains missing.

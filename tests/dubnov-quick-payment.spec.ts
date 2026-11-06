@@ -1,6 +1,7 @@
 import { test, expect, type APIRequestContext } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 import { quickPaymentQuote, parseQuickPaymentInput } from "@/lib/dubnov-quick-payment";
+import { parseGrowQuickPaymentConfig, validateGrowHostedPaymentUrl } from "@/lib/grow-quick-payment-config";
 
 const fixture = "http://127.0.0.1:4012";
 const healthMarker = "SYNTHETIC_HEALTH_UPDATE_ONLY";
@@ -31,7 +32,7 @@ async function rawRecord(request: APIRequestContext, reference: string) {
 
 function localCallback(value: string) {
   const url = new URL(value);
-  expect(url.origin).toBe("https://pushtakim.co.il");
+  expect(url.origin).toBe("https://quick-payment-tests.example.test");
   return url.pathname + url.search;
 }
 
@@ -43,6 +44,21 @@ test("price validation uses the server tariff and rejects invalid quantities or 
     { ...validInput(), month: "2026-13" }, { ...validInput(), sessions: "3" }, { ...validInput(), healthConfirmed: false },
     { ...validInput(), healthStatus: "changed", healthUpdate: "" }, { ...validInput(), healthUpdate: "unexpected note" }
   ]) expect(parseQuickPaymentInput(input)).toBeNull();
+});
+
+test("sandbox configuration cannot reach a live payment page or production callbacks", () => {
+  const config = { GROW_QUICK_PAYMENT_ENABLED: "true", GROW_API_ORIGIN: "https://sandboxapi.grow.link", GROW_PAYMENT_MODE: "sandbox", GROW_CALLBACK_ORIGIN: "https://quick-payment-tests.example.test", GROW_USER_ID: "fixture-user", GROW_PAGE_CODE: "fixture-page", GROW_VAT_TYPE: "3" };
+  expect(parseGrowQuickPaymentConfig(config)?.mode).toBe("sandbox");
+  for (const override of [
+    { GROW_QUICK_PAYMENT_ENABLED: "false" }, { GROW_PAYMENT_MODE: "" },
+    { GROW_API_ORIGIN: "https://pay.grow.link" }, { GROW_CALLBACK_ORIGIN: "https://pushtakim.co.il" },
+    { GROW_CALLBACK_ORIGIN: "https://www.pushtakim.co.il" }, { GROW_CALLBACK_ORIGIN: "http://localhost:3012" },
+    { GROW_CALLBACK_ORIGIN: "https://user:password@quick-payment-tests.example.test" }
+  ]) expect(parseGrowQuickPaymentConfig({ ...config, ...override })).toBeNull();
+  expect(validateGrowHostedPaymentUrl("https://sandboxapi.grow.link/payment/fixture", "sandbox")).toBe(true);
+  expect(validateGrowHostedPaymentUrl("https://sandbox.meshulam.co.il/far?l=fixture", "sandbox")).toBe(true);
+  expect(validateGrowHostedPaymentUrl("https://pay.grow.link/fixture", "sandbox")).toBe(false);
+  expect(validateGrowHostedPaymentUrl("https://secure.meshulam.co.il/fixture", "sandbox")).toBe(false);
 });
 
 test("synthetic Doron: three October sessions are 270 ILS, with no repeat questionnaire and verified tracking", async ({ page, request, context }) => {

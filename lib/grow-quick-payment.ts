@@ -2,20 +2,12 @@ import "server-only";
 
 import type { SalesRecord } from "@/lib/sales-db";
 import { quickPaymentQuote } from "@/lib/dubnov-quick-payment";
+import { parseGrowQuickPaymentConfig, validateGrowHostedPaymentUrl } from "@/lib/grow-quick-payment-config";
 
 type GrowResult = { status?: number | string; data?: Record<string, unknown> };
 
 export function getGrowQuickPaymentConfig() {
-  const origin = process.env.GROW_API_ORIGIN?.trim() || "";
-  const userId = process.env.GROW_USER_ID?.trim() || "";
-  const pageCode = process.env.GROW_PAGE_CODE?.trim() || "";
-  const vatType = process.env.GROW_VAT_TYPE?.trim() || "";
-  try {
-    const url = new URL(origin);
-    const providerHost = ["meshulam.co.il", "grow.link", "grow.business"].some(host => url.hostname === host || url.hostname.endsWith("." + host));
-    if (url.protocol !== "https:" || url.origin !== origin || !providerHost || !userId || !pageCode || !["1", "3"].includes(vatType)) return null;
-  } catch { return null; }
-  return process.env.GROW_QUICK_PAYMENT_ENABLED === "true" ? { origin, userId, pageCode, vatType } : null;
+  return parseGrowQuickPaymentConfig(process.env);
 }
 
 export async function callGrowQuickPayment(method: "createPaymentProcess" | "getPaymentProcessInfo" | "approveTransaction", values: Record<string, string>): Promise<Record<string, unknown>> {
@@ -36,12 +28,8 @@ export async function callGrowQuickPayment(method: "createPaymentProcess" | "get
 }
 
 export function validGrowPaymentUrl(value: unknown) {
-  if (typeof value !== "string") return false;
-  try {
-    const url = new URL(value);
-    return url.protocol === "https:" && !url.username && !url.password
-      && ["meshulam.co.il", "grow.link", "grow.business"].some(host => url.hostname === host || url.hostname.endsWith("." + host));
-  } catch { return false; }
+  const config = getGrowQuickPaymentConfig();
+  return Boolean(config && validateGrowHostedPaymentUrl(value, config.mode));
 }
 
 export async function createGrowQuickPayment(record: SalesRecord, guardianName: string, callbackKey: string) {
@@ -50,7 +38,7 @@ export async function createGrowQuickPayment(record: SalesRecord, guardianName: 
   const quote = quickPaymentQuote(record.fullName, record.classMonth, record.sessionCount);
   if (quote.total !== record.price) throw new Error("QUICK_PAYMENT_AMOUNT_MISMATCH");
   // This is a new process on the existing merchant's Grow account, not a mutable price in a shared link.
-  const origin = "https://pushtakim.co.il";
+  const origin = config.callbackOrigin;
   const result = await callGrowQuickPayment("createPaymentProcess", {
     userId: config.userId, chargeType: "1", sum: String(quote.total), paymentNum: "1",
     description: quote.description, "pageField[fullName]": guardianName,

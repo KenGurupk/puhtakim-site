@@ -22,6 +22,8 @@ export default defineConfig({
         KV_REST_API_URL: "http://127.0.0.1:4012",
         KV_REST_API_TOKEN: "fixture-only",
         GROW_API_ORIGIN: "https://sandboxapi.grow.link",
+        GROW_PAYMENT_MODE: "sandbox",
+        GROW_CALLBACK_ORIGIN: "https://quick-payment-tests.example.test",
         GROW_USER_ID: "fixture-user-id",
         GROW_PAGE_CODE: "fixture-page-code",
         GROW_VAT_TYPE: "3",
