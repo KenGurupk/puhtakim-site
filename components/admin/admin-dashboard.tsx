@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { DubnovQuickPayments } from "@/components/admin/dubnov-quick-payments";
 
 import { checkoutConfig } from "@/lib/checkout-config";
 import type { CheckoutIntent } from "@/lib/checkout-intents";
@@ -425,6 +426,8 @@ export function AdminDashboard() {
             </button>
           </div>
         </div>
+
+        <DubnovQuickPayments purchases={intents} onViewRegistration={viewForm} />
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <MetricCard label="סה״כ כרטיסים ששולמו" value={metrics.totalSold.toLocaleString("he-IL")} />

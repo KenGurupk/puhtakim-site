@@ -44,7 +44,7 @@ function getKvConfig() {
   };
 }
 
-async function redisCommand<T>(command: unknown[]) {
+export async function redisCommand<T>(command: unknown[]) {
   const config = getKvConfig();
   const response = await fetch(config.url, {
     method: "POST",
@@ -299,6 +299,15 @@ function parseHash(hash: string[] | Record<string, string> | null): SalesRecord 
     paymentVerifiedAt: object.paymentVerifiedAt || undefined,
     paymentMatchMethod: object.paymentMatchMethod || undefined,
     inventoryHoldExpiresAt: object.inventoryHoldExpiresAt || undefined,
+    productType: object.productType as SalesRecord["productType"] || undefined,
+    classPlan: object.classPlan as SalesRecord["classPlan"] || undefined,
+    classMonth: object.classMonth || undefined,
+    registrationId: object.registrationId || undefined,
+    purchaseKind: object.purchaseKind as SalesRecord["purchaseKind"] || undefined,
+    sessionCount: object.sessionCount ? Number(object.sessionCount) : undefined,
+    unitPrice: object.unitPrice ? Number(object.unitPrice) : undefined,
+    statusAccessToken: object.statusAccessToken || undefined,
+    growReceiptNumber: object.growReceiptNumber || undefined,
     compliance: hasComplianceFields
       ? {
           healthDeclarationCompleted: object.healthDeclarationCompleted === "true",
@@ -361,6 +370,15 @@ function serializeRecord(record: SalesRecord) {
     paymentVerifiedAt: record.paymentVerifiedAt ?? "",
     paymentMatchMethod: record.paymentMatchMethod ?? "",
     inventoryHoldExpiresAt: record.inventoryHoldExpiresAt ?? "",
+    productType: record.productType ?? "",
+    classPlan: record.classPlan ?? "",
+    classMonth: record.classMonth ?? "",
+    registrationId: record.registrationId ?? "",
+    purchaseKind: record.purchaseKind ?? "",
+    sessionCount: record.sessionCount === undefined ? "" : String(record.sessionCount),
+    unitPrice: record.unitPrice === undefined ? "" : String(record.unitPrice),
+    statusAccessToken: record.statusAccessToken ?? "",
+    growReceiptNumber: record.growReceiptNumber ?? "",
     healthDeclarationCompleted: String(record.compliance?.healthDeclarationCompleted ?? false),
     requiresMedicalApproval: String(record.compliance?.requiresMedicalApproval ?? false),
     healthDeclarationVersion: record.compliance?.healthDeclarationVersion ?? "",
@@ -561,16 +579,19 @@ export async function findExistingManualCheckinRecord(input: {
 }
 
 export async function listSalesRecords() {
-  const refs = await redisCommand<string[]>(["LRANGE", refsKey, 0, 999]);
+  const refs = await redisCommand<string[]>(["LRANGE", refsKey, 0, -1]);
   const uniqueRefs = Array.from(new Set(refs));
 
   if (!uniqueRefs.length) {
     return [];
   }
 
-  const hashes = await redisPipeline<string[] | Record<string, string> | null>(
-    uniqueRefs.map((reference) => ["HGETALL", recordKey(reference)])
-  );
+  const hashes: Array<string[] | Record<string, string> | null> = [];
+  for (let index = 0; index < uniqueRefs.length; index += 200) {
+    hashes.push(...await redisPipeline<string[] | Record<string, string> | null>(
+      uniqueRefs.slice(index, index + 200).map((reference) => ["HGETALL", recordKey(reference)])
+    ));
+  }
 
   return hashes
     .map(parseHash)
@@ -592,6 +613,10 @@ export async function markSalesRecordPaid(input: {
   if (!existing) {
     return null;
   }
+
+  // Quick payments are settled only after server-to-server process verification.
+  // The legacy webhook must never mark one paid from a missing status or a browser return.
+  if (existing.purchaseKind === "existing_single") throw new Error("QUICK_PAYMENT_REQUIRES_GROW_PROCESS_VERIFICATION");
 
   if (typeof input.growPaymentAmount === "number" && input.growPaymentAmount !== existing.price) {
     throw new Error("GROW_AMOUNT_MISMATCH");

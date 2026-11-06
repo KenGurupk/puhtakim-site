@@ -105,7 +105,7 @@ function timingSafeEqual(left: string, right: string) {
 
 export function adminAuthConfigured() {
   const { username, password } = getAdminCredentials();
-  return Boolean((username && password) || (temporaryAdminUsername && temporaryAdminPasswordHash));
+  return Boolean((username && password) || process.env.ADMIN_SESSION_SECRET?.trim());
 }
 
 export async function validateAdminCredentials(username: string, password: string) {
@@ -122,7 +122,7 @@ export async function validateAdminCredentials(username: string, password: strin
     }
   }
 
-  if (!timingSafeEqual(normalizedUsername, temporaryAdminUsername)) {
+  if (!process.env.ADMIN_SESSION_SECRET?.trim() || !timingSafeEqual(normalizedUsername, temporaryAdminUsername)) {
     return false;
   }
 
@@ -142,11 +142,12 @@ function getAdminSessionIdentity() {
 
   return {
     username: temporaryAdminUsername,
-    secret: `${temporaryAdminUsername}:${temporaryAdminPasswordHash}`
+    secret: process.env.ADMIN_SESSION_SECRET?.trim() || ""
   };
 }
 
 export async function createAdminSessionToken() {
+  if (!adminAuthConfigured()) throw new Error("ADMIN_AUTH_NOT_CONFIGURED");
   const { username, secret } = getAdminSessionIdentity();
   const now = Math.floor(Date.now() / 1000);
   const payload = {
